@@ -42,11 +42,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                 }
             }
         })
-        .state('tabs.chat', {
-            url: '/chat',
+        .state('tabs.tournament', {
+            url: '/tournament',
             views: {
-                'chat': {
-                    templateUrl: 'tpl/chat.html'
+                'tournament': {
+                    templateUrl: 'tpl/tournament.html'
                 }
             }
         })

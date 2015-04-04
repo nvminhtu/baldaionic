@@ -1,19 +1,99 @@
-// Ionic Starter App
+var app = angular.module('balda', ['ionic', 'gameplay']);
 
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+app.run(function($ionicPlatform) {
+    $ionicPlatform.ready(function() {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+        if(window.cordova && window.cordova.plugins.Keyboard) {
+            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        }
+        if(window.StatusBar) {
+            StatusBar.styleDefault();
+        }
+    });
+});
 
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-  });
-})
+app.config(function ($stateProvider, $urlRouterProvider) {
+
+    $stateProvider
+        .state('auth', {
+            url: '/auth',
+            templateUrl : 'tpl/auth.html',
+            controller: 'authController'
+        })
+        .state('tabs', {
+            url: '/tab',
+            abstract: true,
+            templateUrl: 'tpl/tabs.html'
+        })
+        .state('tabs.matchlist', {
+            url: '/matchlist',
+            views: {
+                'matchlist': {
+                    templateUrl: 'tpl/matchlist.html'
+                }
+            }
+        })
+        .state('tabs.newgame', {
+            url: '/newgame',
+            views: {
+                'newgame': {
+                    templateUrl: 'tpl/newgame.html'
+                }
+            }
+        })
+        .state('tabs.chat', {
+            url: '/chat',
+            views: {
+                'chat': {
+                    templateUrl: 'tpl/chat.html'
+                }
+            }
+        })
+        .state('tabs.profile', {
+            url: '/profile',
+            views: {
+                'profile': {
+                    templateUrl: 'tpl/profile.html'
+                }
+            }
+        })
+        .state('tabs.settings', {
+            url: '/settings',
+            views: {
+                'settings': {
+                    templateUrl: 'tpl/settings.html'
+                }
+            }
+        });
+
+    $urlRouterProvider.otherwise('/auth');
+});
+
+app.controller('authController', function ($scope, $state, $ionicLoading) {
+
+    $scope.user = {
+        name: '',
+        loading: false
+    };
+
+    $scope.gotoGameplay = function() {
+        $state.go('gameplay');
+    };
+
+    $scope.authorizeMe = function(user) {
+        //if(user.name.length > 0) {
+        //
+        //    $state.go('tabs.newgame');
+        //    //user.name = '';
+        //    //$scope.loading = true;
+        //
+        //    // $ionicLoading.show({
+        //    //     template: 'Please wait while we register your device...'
+        //    // });
+        //}
+        //else
+        //    alert('No name');
+        $state.go('tabs.newgame');
+    };
+});

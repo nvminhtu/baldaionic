@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title></title>
@@ -20,15 +20,20 @@
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
-  </head>
-  <body ng-app="starter" class="platform-android platform-cordova platform-webview">
+    <script src="js/gameplay.js"></script>
+    <script src="js/selectletter.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/server.js"></script>
+</head>
+<body ng-app="balda" class="platform-android platform-cordova platform-webview">
 
-    <ion-pane>
-      <ion-header-bar class="bar-stable">
-        <h1 class="title">Ionic Blank Starter</h1>
-      </ion-header-bar>
-      <ion-content>
-      </ion-content>
-    </ion-pane>
-  </body>
+    <ion-nav-bar>
+        <ion-nav-back-button>
+        </ion-nav-back-button>
+    </ion-nav-bar>
+
+    <ion-nav-view animation="slide-left-right"></ion-nav-view>
+
+</body>
 </html>

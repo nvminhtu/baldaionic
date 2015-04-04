@@ -1,0 +1,15 @@
+<ion-view view-title="Авторизация">
+    <ion-content>
+        <div class="list">
+            <h4 class="item">Добро пожаловать в Балду!</h4>
+            <label class="item item-input">
+                <span class="input-label">Имя:</span>
+                <input type="text" ng-model="user.name" placeholder="Введите свое имя...">
+            </label>
+        </div>
+        <div class="padding">
+            <button class="button button-block" ng-click="authorizeMe(user)" ng-show="!loading">Войти</button>
+            <button class="button button-calm" ng-click="gotoGameplay()">Геймплей</button>
+        </div>
+    </ion-content>
+</ion-view>
