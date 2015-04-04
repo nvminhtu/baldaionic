@@ -23,16 +23,29 @@ gp.constant('fieldConst', {
 });
 
 gp.run(function (server) {
-    server.test();
+
 });
 
 gp.controller('gameplayController', function ($scope, fieldConst) {
 
+    var m = $scope.model = {
+        cells: [],
+        selectedPath: [],
+        selectionEnabled: true,
+        hasEmptyCell: false
+    };
+
+    function fillCell(x, y, c, type) {
+        setCell(x, y, {
+            val: c,
+            class: type
+        });
+    }
 
     function init()
     {
         for(var i = 0; i < fieldConst.max * fieldConst.max; ++i) {
-            $scope.cells.push({
+            m.cells.push({
                 val: '',
                 class: fieldConst.cellType.free,
                 x: i % fieldConst.max,
@@ -40,43 +53,27 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
             });
         }
 
-        $scope.fillCell(0, 2, 'Б', fieldConst.cellType.filledMyOld);
-        $scope.fillCell(1, 2, 'А', fieldConst.cellType.filledMyOld);
-        $scope.fillCell(2, 2, 'Л', fieldConst.cellType.available);
-        $scope.fillCell(3, 2, 'Д', fieldConst.cellType.available);
-        $scope.fillCell(4, 2, 'А', fieldConst.cellType.available);
-        $scope.fillCell(1, 3, 'Л', fieldConst.cellType.filledMyNew);
+        fillCell(0, 2, 'Б', fieldConst.cellType.filledMyOld);
+        fillCell(1, 2, 'А', fieldConst.cellType.filledMyOld);
+        fillCell(2, 2, 'Л', fieldConst.cellType.available);
+        fillCell(3, 2, 'Д', fieldConst.cellType.available);
+        fillCell(4, 2, 'А', fieldConst.cellType.available);
+        fillCell(1, 3, 'Л', fieldConst.cellType.filledMyNew);
     }
-
-    $scope.cells = [];
-
-    $scope.cells = [];
-
-    $scope.selectionEnabled = true;
-    $scope.selectedPath = [];
-    $scope.hasEmptyCell = false;
-
 
     function coord(x, y) { return x + fieldConst.max * y; }
 
     function getCell(x, y) {
-        return $scope.cells[coord(x, y)];
+        return m.cells[coord(x, y)];
     }
 
     function setCell(x, y, cell) {
         var i = coord(x, y);
-        $scope.cells[i] = angular.extend($scope.cells[i], cell);
+        m.cells[i] = angular.extend(m.cells[i], cell);
     }
 
     $scope.clickCell = function(c) {
         $scope.openSelectLetter();
-    };
-
-    $scope.fillCell = function(x, y, c, type) {
-        setCell(x, y, {
-            val: c,
-            class: type
-        })
     };
 
     $scope.cellTrackerMove = function(x, y) {
@@ -90,7 +87,8 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
     $scope.openSelectLetter = function () {
         $scope.$broadcast('showSelectLetter');
     };
-
+    
+    init();
 });
 
 gp.directive("cellTracker", function() {
@@ -124,6 +122,8 @@ gp.directive("cellTracker", function() {
 
             function end(event)
             {
+                event.preventDefault();
+
                 if(scope.cellTrackerEnd)
                     scope.cellTrackerEnd();
             }
