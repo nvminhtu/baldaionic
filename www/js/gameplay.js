@@ -63,9 +63,6 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
         m.cells[i] = angular.extend(m.cells[i], cell);
     }
 
-    $scope.clickCell = function(c) {
-        $scope.openSelectLetter();
-    };
 
     $scope.cellTrackerMove = function(x, y) {
 
@@ -73,6 +70,10 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
             class: fieldConst.cellType.filledMyNew
         });
         $scope.$digest();
+    };
+
+    $scope.cellTrackerEnd = function() {
+        $scope.openSelectLetter();
     };
 
     $scope.openSelectLetter = function () {

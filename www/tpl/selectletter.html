@@ -1,14 +1,14 @@
 <ion-modal-view>
-    <ion-header-bar>
+    <ion-header-bar class="bar-energized">
         <h1 class="title">Выберите букву</h1>
     </ion-header-bar>
-    <ion-content>
+    <ion-content class="bg">
         <div class="letterselector">
             <div ng-repeat="letter in letters" ng-click="selectLetter($index)" class="ls-one">
                 <span class="ls-letter">{{ letter }}</span></div>
         </div>
         <div class="padding">
-            <button class="button button-block button-stable" ng-click="closeModal()">Закрыть</button>
+            <button class="button button-block button-energized" ng-click="closeModal()">Закрыть</button>
         </div>
     </ion-content>
 </ion-modal-view>

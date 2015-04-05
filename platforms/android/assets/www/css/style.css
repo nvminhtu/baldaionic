@@ -19,7 +19,7 @@
 }
 
 .fieldcell-empty {
-    background-color: #f3f5fa;
+    background-color: rgba(240, 240, 240, 0.5);
 }
 
 .fieldcell-available {
