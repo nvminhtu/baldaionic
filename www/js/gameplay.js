@@ -1,10 +1,5 @@
 var gp = angular.module('gameplay', ['ionic', 'selectLetter', 'server']);
 
-gp.config(function ($stateProvider) {
-
-
-});
-
 gp.constant('fieldConst', {
     max: 5,
     cellType: {
@@ -17,13 +12,62 @@ gp.constant('fieldConst', {
     }
 });
 
+function isCellFree(cell) { return cell == null || !cell.val || cell.val == ''; }
+
+function SelectionPath() {
+    var t = this;
+    t.path = [];
+    t.getLength = function() { return t.path.length; };
+    t.getLast = function() {
+        if(t.path.length > 0) return t.path[t.path.length - 1];
+        else return null;
+    };
+    t.isLastCoord = function(x, y) {
+        var last = t.getLast();
+        return last && last.x == x && last.y == y;
+    };
+    t.clear = function() { t.path = []; };
+    t.isValid = function() {
+        var numberOfNew = 0;
+        var numberOfOld = 0;
+
+        for(var i = 0; i < t.path.length; ++i)
+            if(isCellFree(t.path[i]))
+                ++numberOfNew;
+            else
+                ++numberOfOld;
+
+        return numberOfNew == 1 && numberOfOld >= 1;
+    };
+    t.hasInPathCoord = function(x, y) {
+        for(var i = 0; i < t.path.length; ++i)
+        {
+            var cell = t.path[i];
+            if(cell.x == x && cell.y == y) return true;
+        }
+        return false;
+    };
+    t.pushCell = function(cell) {
+        t.path.push(cell);
+    };
+    t.deleteLast = function() {
+        if(t.path.length > 0)
+            t.path = t.path.slice(0, t.path.length - 1);
+    };
+}
+
 gp.controller('gameplayController', function ($scope, fieldConst) {
+
+    var fieldMax = fieldConst.max;
+    var fieldTotal = fieldMax * fieldMax;
+    var cellTypes = fieldConst.cellType;
 
     var m = $scope.model = {
         cells: [],
-        selectedPath: [],
+        selectedPath: new SelectionPath(),
         selectionEnabled: true,
-        hasEmptyCell: false
+        selectionStarted: false,
+        lastCoords: {x: 0, y: 0}
     };
 
     function fillCell(x, y, c, type) {
@@ -33,28 +77,64 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
         });
     }
 
+
     function init()
     {
-        for(var i = 0; i < fieldConst.max * fieldConst.max; ++i) {
-            m.cells.push({
+        for(var i = 0; i < fieldTotal; ++i) {
+            var cell = {
                 val: '',
-                class: fieldConst.cellType.free,
-                x: i % fieldConst.max,
-                y: (i / fieldConst.max | 0)
-            });
+                class: cellTypes.free,
+                x: i % fieldMax,
+                y: (i / fieldMax | 0)
+            };
+            m.cells.push(cell);
         }
 
-        fillCell(0, 2, 'Б', fieldConst.cellType.filledMyOld);
-        fillCell(1, 2, 'А', fieldConst.cellType.filledMyOld);
-        fillCell(2, 2, 'Л', fieldConst.cellType.available);
-        fillCell(3, 2, 'Д', fieldConst.cellType.available);
-        fillCell(4, 2, 'А', fieldConst.cellType.available);
-        fillCell(1, 3, 'Л', fieldConst.cellType.filledMyNew);
+        fillCell(0, 2, 'Б', cellTypes.filledMyOld);
+        fillCell(1, 2, 'А', cellTypes.filledMyOld);
+        fillCell(2, 2, 'Л', cellTypes.available);
+        fillCell(3, 2, 'Д', cellTypes.available);
+        fillCell(4, 2, 'А', cellTypes.available);
+        fillCell(1, 3, 'Л', cellTypes.filledMyNew);
+
+        clearField();
     }
 
-    function coord(x, y) { return x + fieldConst.max * y; }
+    function doesCellHasFilledNeighbors(x, y)
+    {
+        return [
+            {x: x - 1, y: y},
+            {x: x + 1, y: y},
+            {x: x, y: y + 1},
+            {x: x, y: y - 1}
+        ].map(function (coord) {
+             return getCell(coord.x, coord.y);
+        }).reduce(function (prev, cur) {
+                return prev || !isCellFree(cur);
+            }, false);
+    }
+
+    function clearField()
+    {
+        for(var i = 0; i < fieldTotal; ++i) {
+            var cell = m.cells[i];
+            var cellType;
+            if(!isCellFree(cell))
+                cellType = cellTypes.available;
+            else if(doesCellHasFilledNeighbors(cell.x, cell.y))
+                cellType = cellTypes.available;
+            else
+                cellType = cellTypes.free;
+
+            cell.class = cellType;
+        }
+    }
+
+    function coord(x, y) { return x + fieldMax * y; }
 
     function getCell(x, y) {
+        if(x < 0 || y < 0 || x >= fieldMax || y >= fieldMax)
+            return null;
         return m.cells[coord(x, y)];
     }
 
@@ -63,17 +143,38 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
         m.cells[i] = angular.extend(m.cells[i], cell);
     }
 
+    function onSelectionMove(x, y) {
+        console.log('move', x, y);
 
-    $scope.cellTrackerMove = function(x, y) {
+        m.selectedPath.pushCell(getCell(x, y));
 
         setCell(x, y, {
-            class: fieldConst.cellType.filledMyNew
-        });
+                class: fieldConst.cellType.filledMyNew
+            });
         $scope.$digest();
+
+
+    }
+
+    $scope.cellTrackerMove = function(x, y) {
+        if(!m.selectionStarted || (x != m.lastCoords.x || y != m.lastCoords.y))
+        {
+            if(!m.selectionStarted) {
+                m.selectionStarted = true;
+                clearField();
+            }
+            onSelectionMove(x, y);
+            m.lastCoords = {x: x, y: y};
+        }
     };
 
     $scope.cellTrackerEnd = function() {
-        $scope.openSelectLetter();
+        if(m.selectedPath.isValid())
+            $scope.openSelectLetter();
+        m.selectionStarted = false;
+        m.selectedPath.clear();
+
+        console.log('stop!');
     };
 
     $scope.openSelectLetter = function () {

@@ -42,6 +42,10 @@
     background-color: #75c2e5;
 }
 
+.fieldcell-can-be-next {
+    background-color: chartreuse;
+}
+
 /*Выборка букв*/
 
 .cellletter {
@@ -60,7 +64,7 @@
     width: 55px;
     height: 55px;
     float: left;
-    background-color: rgba(240, 240, 240, 0.5);     
+    background-color: rgba(240, 240, 240, 0.5);
     border-radius: 10%;
     margin: 2px;
     text-align: center;
@@ -72,6 +76,10 @@
     display: inline-block;
     vertical-align: middle;
     line-height: 55px;
+}
+
+.ls-one:hover {
+    background-color: rgba(200, 200, 200, 0.5);
 }
 
 /*Фон*/
