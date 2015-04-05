@@ -87,7 +87,7 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
     $scope.openSelectLetter = function () {
         $scope.$broadcast('showSelectLetter');
     };
-    
+
     init();
 });
 
