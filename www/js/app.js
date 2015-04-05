@@ -68,6 +68,17 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             }
         });
 
+    $stateProvider
+        .state('tabs.gameplay', {
+            url: '/gameplay',
+            views: {
+                'newgame': {
+                    templateUrl: 'tpl/gameplay.html',
+                    controller: 'gameplayController'
+                }
+            }
+        });
+
     $urlRouterProvider.otherwise('/auth');
 });
 

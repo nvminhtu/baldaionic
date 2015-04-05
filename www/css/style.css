@@ -73,3 +73,10 @@
     vertical-align: middle;
     line-height: 55px;
 }
+
+/*Фон*/
+
+.bg {
+    background-image:url(../img/bg.jpg);
+    background-repeat:repeat;
+}

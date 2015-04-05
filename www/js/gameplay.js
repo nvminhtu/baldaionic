@@ -2,12 +2,7 @@ var gp = angular.module('gameplay', ['ionic', 'selectLetter', 'server']);
 
 gp.config(function ($stateProvider) {
 
-    $stateProvider
-        .state('gameplay', {
-            url: '/gameplay',
-            templateUrl: 'tpl/gameplay.html',
-            controller: 'gameplayController'
-        });
+
 });
 
 gp.constant('fieldConst', {
@@ -20,10 +15,6 @@ gp.constant('fieldConst', {
         filledTheirOld: ['fieldcell', 'fieldcell-filled-their'],
         filledTheirNew: ['fieldcell', 'fieldcell-filled-their-new']
     }
-});
-
-gp.run(function (server) {
-
 });
 
 gp.controller('gameplayController', function ($scope, fieldConst) {

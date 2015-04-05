@@ -1,7 +1,7 @@
 <ion-view view-title="Настройки">
     <ion-content>
         <div class="list">
-            <div ng-repeat="price in model.prices">{{ price.name + ' = ' + price.value }}</div>
+            <div class="list-item" ng-repeat="price in model.prices">{{ price.name + ' = ' + price.value }}</div>
         </div>
     </ion-content>
 </ion-view>

@@ -1,4 +1,4 @@
-var app = angular.module('balda', ['ionic', 'gameplay']);
+var app = angular.module('balda', ['ionic', 'gameplay', 'util']);
 
 app.run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -62,12 +62,35 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url: '/settings',
             views: {
                 'settings': {
-                    templateUrl: 'tpl/settings.html'
+                    templateUrl: 'tpl/settings.html',
+                    controller: 'settingsController'
+                }
+            }
+        });
+
+    $stateProvider
+        .state('tabs.gameplay', {
+            url: '/gameplay',
+            views: {
+                'newgame': {
+                    templateUrl: 'tpl/gameplay.html',
+                    controller: 'gameplayController'
                 }
             }
         });
 
     $urlRouterProvider.otherwise('/auth');
+});
+
+app.controller('settingsController', function ($scope, server) {
+
+    var m = $scope.model = {
+        prices: {}
+    };
+
+    server.getPrices().then(function() {
+        m.prices = server.prices;
+    });
 });
 
 app.controller('authController', function ($scope, $state, $ionicLoading) {
