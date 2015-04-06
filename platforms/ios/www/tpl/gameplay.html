@@ -1,7 +1,7 @@
 <ion-view view-title="Игра">
-    <ion-content  scroll="false">
+    <ion-content scroll="false" class="bg">
         <div class="field" cell-tracker>
-            <div ng-repeat="cell in cells" class="fieldcell" ng-class="cell.class" cell-x="{{ cell.x }}" cell-y="{{ cell.y }}">
+            <div ng-repeat="cell in model.cells" class="fieldcell" ng-class="cell.class" cell-x="{{ cell.x }}" cell-y="{{ cell.y }}">
                 <span class="cellletter" cell-x="{{ cell.x }}" cell-y="{{ cell.y }}">
                     {{ cell.val }}
                 </span>
