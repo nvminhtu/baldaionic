@@ -83,7 +83,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             }
         });
 
-    $urlRouterProvider.otherwise('/tabs/matchlist');
+    $urlRouterProvider.otherwise('/auth');
 });
 
 
@@ -108,16 +108,22 @@ app.controller('settingsController', function ($scope, server, $ionicLoading) {
 
 app.controller('authController', function ($scope, $state, $ionicLoading) {
 
-    $scope.user = {
+    var m = $scope.model = {
         name: '',
-        loading: false
+        loading: false,
+        isError: true
     };
+
+    $scope.$watch('model.name', function() {
+        var name = m.name.trim();
+        m.isError = name.length < 2 || name.length >= 32;
+    });
 
     $scope.gotoGameplay = function() {
         $state.go('gameplay');
     };
 
-    $scope.authorizeMe = function(user) {
+    $scope.authorizeMe = function() {
         //if(user.name.length > 0) {
         //
         //    $state.go('tabs.newgame');
@@ -130,6 +136,7 @@ app.controller('authController', function ($scope, $state, $ionicLoading) {
         //}
         //else
         //    alert('No name');
-        $state.go('tabs.newgame');
+        if(!m.isError)
+            $state.go('tabs.newgame');
     };
 });
