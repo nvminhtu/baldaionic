@@ -106,7 +106,7 @@ app.controller('settingsController', function ($scope, server, $ionicLoading) {
     });
 });
 
-app.controller('authController', function ($scope, $state, $ionicLoading) {
+app.controller('authController', function ($scope, $state, $ionicLoading, socialProvider) {
 
     var m = $scope.model = {
         name: '',
@@ -114,9 +114,11 @@ app.controller('authController', function ($scope, $state, $ionicLoading) {
         isError: true
     };
 
+    
     $scope.$watch('model.name', function() {
         var name = m.name.trim();
         m.isError = name.length < 2 || name.length >= 32;
+        socialProvider.name = name;
     });
 
     $scope.gotoGameplay = function() {
@@ -138,5 +140,6 @@ app.controller('authController', function ($scope, $state, $ionicLoading) {
         //    alert('No name');
         if(!m.isError)
             $state.go('tabs.newgame');
+        console.log(socialProvider.name);
     };
 });
