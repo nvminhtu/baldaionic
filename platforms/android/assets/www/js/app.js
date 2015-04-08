@@ -22,15 +22,30 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller: 'authController'
         })
         .state('tabs', {
-            url: '/tab',
+            url: '/tabs',
             abstract: true,
-            templateUrl: 'tpl/tabs.html'
+            templateUrl: 'tpl/tabs.html',
+            controller: function($scope, $ionicHistory) {
+                $scope.onTabSelected = function() {
+                    $ionicHistory.clearHistory();
+                }
+            }
         })
         .state('tabs.matchlist', {
             url: '/matchlist',
             views: {
                 'matchlist': {
-                    templateUrl: 'tpl/matchlist.html'
+                    templateUrl: 'tpl/matchlist.html',
+                    controller: 'matchlistController'
+                }
+            }
+        })
+        .state('tabs.gameplay', {
+            url: '/gameplay',
+            views: {
+                'matchlist': {
+                    templateUrl: 'tpl/gameplay.html',
+                    controller: 'gameplayController'
                 }
             }
         })
@@ -68,18 +83,12 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             }
         });
 
-    $stateProvider
-        .state('tabs.gameplay', {
-            url: '/gameplay',
-            views: {
-                'newgame': {
-                    templateUrl: 'tpl/gameplay.html',
-                    controller: 'gameplayController'
-                }
-            }
-        });
+    $urlRouterProvider.otherwise('/tabs/matchlist');
+});
 
-    $urlRouterProvider.otherwise('/auth');
+
+app.controller('matchlistController', function ($scope, $state) {
+
 });
 
 app.controller('settingsController', function ($scope, server) {

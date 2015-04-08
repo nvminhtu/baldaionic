@@ -9,12 +9,16 @@ sl.controller('selectLetterController', function ($ionicModal, $scope) {
         $scope.modal = modal;
     });
 
-    $scope.$on('showSelectLetter', function () {
+    var callback = null;
+
+    $scope.$on('showSelectLetter', function (e, arg) {
+        callback = arg.callback;
         $scope.openModal();
     });
 
     $scope.selectLetter = function(i) {
-        $scope.$emit('selectedLetter', i);
+        if(callback)
+            callback(i);
         $scope.closeModal();
     };
 

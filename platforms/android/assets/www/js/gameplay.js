@@ -1,10 +1,5 @@
 var gp = angular.module('gameplay', ['ionic', 'selectLetter', 'server']);
 
-gp.config(function ($stateProvider) {
-
-
-});
-
 gp.constant('fieldConst', {
     max: 5,
     cellType: {
@@ -13,17 +8,117 @@ gp.constant('fieldConst', {
         filledMyOld: ['fieldcell', 'fieldcell-filled-my'],
         filledMyNew: ['fieldcell', 'fieldcell-filled-my-new'],
         filledTheirOld: ['fieldcell', 'fieldcell-filled-their'],
-        filledTheirNew: ['fieldcell', 'fieldcell-filled-their-new']
+        filledTheirNew: ['fieldcell', 'fieldcell-filled-their-new'],
+        nextPossible: ['fieldcell', 'fieldcell-can-be-next']
     }
 });
+//
+//gp.config(function ($stateProvider) {
+//    $stateProvider
+//        .state('tabs.gameplay', {
+//            url: '/gameplay',
+//            views: {
+//                'matchlist': {
+//                    templateUrl: 'tpl/gameplay.html',
+//                    controller: 'gameplayController'
+//                }
+//            }
+//        });
+//});
+
+function isCellFree(cell) { return cell == null || !cell.val || cell.val == ''; }
+
+function SelectionPath() {
+    var t = this;
+    t.path = [];
+    t.getLength = function() { return t.path.length; };
+    t.getLast = function() {
+        if(t.path.length > 0) return t.path[t.path.length - 1];
+        else return null;
+    };
+    t.isLastCoord = function(x, y) {
+        var last = t.getLast();
+        return last && last.x == x && last.y == y;
+    };
+    t.clear = function() { t.path = []; };
+    t.isValid = function() {
+        var numberOfNew = 0;
+        var numberOfOld = 0;
+
+        for(var i = 0; i < t.path.length; ++i)
+            if(isCellFree(t.path[i]))
+                ++numberOfNew;
+            else
+                ++numberOfOld;
+
+        return numberOfNew == 1 && numberOfOld >= 1;
+    };
+    t.getNewCell = function() {
+        for(var i = 0; i < t.path.length; ++i) {
+            if (isCellFree(t.path[i]))
+                return t.path[i];
+        }
+        return null;
+    };
+    t.hasInPathCoord = function(x, y) {
+        for(var i = 0; i < t.path.length; ++i)
+        {
+            var cell = t.path[i];
+            if(cell.x == x && cell.y == y) return true;
+        }
+        return false;
+    };
+    t.isNeighborToLast = function(x, y, defaultIfNotLast) {
+        var last = t.getLast();
+        if(!last) return defaultIfNotLast;
+        var delta = Math.abs(last.x - x) + Math.abs(last.y - y);
+        return delta == 1;
+    };
+    t.pushCell = function(cell) {
+        var l = t.getLength();
+        var x = cell.x, y = cell.y;
+        if(t.hasInPathCoord(x, y))
+        {
+            if(l >= 2) {
+                var cellBeforeLast = t.path[l - 2];
+                if(cellBeforeLast.x == x && cellBeforeLast.y == y)
+                    t.deleteLast();
+            }
+            return false;
+        }
+        else if(isCellFree(cell) && t.getNewCell() != null)
+            return false;
+        else if(!t.isNeighborToLast(x, y, true))
+            return false;
+        else {
+            t.path.push(cell);
+            return true;
+        }
+    };
+    t.deleteLast = function() {
+        if(t.path.length > 0)
+            t.path = t.path.slice(0, t.path.length - 1);
+    };
+    t.getWord = function() {
+        return t.path.reduce(function (prev, next) {
+            return prev + next.val;
+        }, '');
+    };
+
+}
 
 gp.controller('gameplayController', function ($scope, fieldConst) {
 
+    var fieldMax = fieldConst.max;
+    var fieldTotal = fieldMax * fieldMax;
+    var cellTypes = fieldConst.cellType;
+
     var m = $scope.model = {
         cells: [],
-        selectedPath: [],
+        selectedPath: new SelectionPath(),
         selectionEnabled: true,
-        hasEmptyCell: false
+        selectionStarted: false,
+        lastCoords: {x: 0, y: 0}
     };
 
     function fillCell(x, y, c, type) {
@@ -35,26 +130,78 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
 
     function init()
     {
-        for(var i = 0; i < fieldConst.max * fieldConst.max; ++i) {
-            m.cells.push({
+        for(var i = 0; i < fieldTotal; ++i) {
+            var cell = {
                 val: '',
-                class: fieldConst.cellType.free,
-                x: i % fieldConst.max,
-                y: (i / fieldConst.max | 0)
-            });
+                class: cellTypes.free,
+                x: i % fieldMax,
+                y: (i / fieldMax | 0)
+            };
+            m.cells.push(cell);
         }
 
-        fillCell(0, 2, 'Б', fieldConst.cellType.filledMyOld);
-        fillCell(1, 2, 'А', fieldConst.cellType.filledMyOld);
-        fillCell(2, 2, 'Л', fieldConst.cellType.available);
-        fillCell(3, 2, 'Д', fieldConst.cellType.available);
-        fillCell(4, 2, 'А', fieldConst.cellType.available);
-        fillCell(1, 3, 'Л', fieldConst.cellType.filledMyNew);
+        fillCell(0, 2, 'Б', cellTypes.filledMyOld);
+        fillCell(1, 2, 'А', cellTypes.filledMyOld);
+        fillCell(2, 2, 'Л', cellTypes.available);
+        fillCell(3, 2, 'Д', cellTypes.available);
+        fillCell(4, 2, 'А', cellTypes.available);
+
+        syncField();
     }
 
-    function coord(x, y) { return x + fieldConst.max * y; }
+    function neighbors(x, y)
+    {
+        return [
+            {x: x - 1, y: y},
+            {x: x + 1, y: y},
+            {x: x, y: y + 1},
+            {x: x, y: y - 1}
+        ];
+    }
+
+    function neighborsCell(x, y)
+    {
+        return neighbors(x, y).map(function (coord) {
+            return getCell(coord.x, coord.y);
+        });
+    }
+
+    function doesCellHasFilledNeighbors(x, y)
+    {
+        return neighborsCell(x, y).reduce(function (prev, cur) {
+                return prev || !isCellFree(cur);
+            }, false);
+    }
+
+    function syncField()
+    {
+        var hasNewCell = m.selectedPath.getNewCell() != null;
+        for(var i = 0; i < fieldTotal; ++i) {
+            var cell = m.cells[i];
+            var x = cell.x, y = cell.y;
+            var isFree = isCellFree(cell);
+            var cellType;
+            if(m.selectedPath.hasInPathCoord(x, y))
+                cellType = cellTypes.filledMyOld;
+            else if(m.selectionStarted && m.selectedPath.isNeighborToLast(x, y, false) && ((isFree && !hasNewCell) || !isFree))
+                cellType = cellTypes.nextPossible;
+            else if(!isCellFree(cell))
+                cellType = cellTypes.available;
+            else if(doesCellHasFilledNeighbors(x, y))
+                cellType = cellTypes.available;
+            else
+                cellType = cellTypes.free;
+
+            cell.class = cellType;
+        }
+        if(!$scope.$$phase) $scope.$apply();
+    }
+
+    function coord(x, y) { return x + fieldMax * y; }
 
     function getCell(x, y) {
+        if(x < 0 || y < 0 || x >= fieldMax || y >= fieldMax)
+            return null;
         return m.cells[coord(x, y)];
     }
 
@@ -63,21 +210,46 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
         m.cells[i] = angular.extend(m.cells[i], cell);
     }
 
+    function onSelectionMove(x, y) {
+        m.selectedPath.pushCell(getCell(x, y));
+        syncField();
+    }
+
+    function finishLetterSelection(letter)
+    {
+        var newCell = m.selectedPath.getNewCell();
+        if(newCell)
+        {
+            newCell.val = letter;
+            syncField();
+            console.log('word = ', m.selectedPath.getWord());
+        }
+    }
 
     $scope.cellTrackerMove = function(x, y) {
-
-        setCell(x, y, {
-            class: fieldConst.cellType.filledMyNew
-        });
-        $scope.$digest();
+        if(!m.selectionStarted || (x != m.lastCoords.x || y != m.lastCoords.y))
+        {
+            if(!m.selectionStarted) {
+                m.selectedPath.clear();
+                m.selectionStarted = true;
+            }
+            onSelectionMove(x, y);
+            m.lastCoords = {x: x, y: y};
+        }
     };
 
     $scope.cellTrackerEnd = function() {
-        $scope.openSelectLetter();
+        if(m.selectedPath.isValid())
+            $scope.openSelectLetter();
+        else
+            m.selectedPath.clear();
+        m.selectionStarted = false;
+
+        syncField();
     };
 
     $scope.openSelectLetter = function () {
-        $scope.$broadcast('showSelectLetter');
+        $scope.$broadcast('showSelectLetter', { callback: finishLetterSelection });
     };
 
     init();

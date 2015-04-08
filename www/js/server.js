@@ -1,6 +1,6 @@
-var sv = angular.module('server', ['ionic', 'config']);
+var sv = angular.module('server', ['ionic', 'config', 'util']);
 
-sv.service('server', function($http, config) {
+sv.service('server', function($http, config, $rootScope, $q) {
 
     var that = this;
     that.sessionKey = '';
@@ -11,16 +11,29 @@ sv.service('server', function($http, config) {
         return $http.post(config.server, data);
     };
 
+    that.onError = function(r) {
+        $rootScope.$broadcast('serverError', r);
+    };
+
     that.makeRequest = function(data) {
         if(that.sessionKey !== '')
             data.session = that.sessionKey;
-        return that.makeGeneralRequest(data);
+        return that.makeGeneralRequest(data).success(function (r) {
+            if(r.result == 'bad') {
+                r.type = 'logic';
+                that.onError(r);
+            }
+        }).error( function () {
+            that.onError({type: 'inet'});
+        });
     };
 
     that.getAnswer = function(r, name) {
-        for(var i = 0; i < r.answers.length; ++i)
-            if(r.answers[i][name])
-                return r.answers[i][name];
+        var a = r['answers'];
+        if(a)
+            for(var i = 0; i < a.length; ++i)
+                if(a[i][name])
+                    return a[i][name];
         return null;
     };
 
@@ -36,4 +49,35 @@ sv.service('server', function($http, config) {
         });
     };
 
+    that.login = function(uid, token, name, sex, photoURL) {
+
+        var data = {
+            method: 'login',
+            uid: uid,
+            token: token
+        };
+        if(name) data.name = name;
+        if(sex) data.sex = +sex;
+        if(photoURL) data.photoURL = photoURL;
+
+        return that.makeRequest(data);
+    };
+
+});
+
+
+app.controller('errorController', function ($rootScope, $scope, $ionicPopup) {
+
+    $rootScope.$on('serverError', function (event, data) {
+        $scope.data = data;
+
+        $ionicPopup.show({
+            title: 'Ошибка!',
+            scope: $scope,
+            templateUrl: 'tpl/error.html',
+            buttons: [
+                { text: 'ОK' }
+            ]
+        });
+    });
 });

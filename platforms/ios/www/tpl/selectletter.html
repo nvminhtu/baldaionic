@@ -4,7 +4,7 @@
     </ion-header-bar>
     <ion-content class="bg">
         <div class="letterselector">
-            <div ng-repeat="letter in letters" ng-click="selectLetter($index)" class="ls-one">
+            <div ng-repeat="letter in letters" ng-click="selectLetter(letter)" class="ls-one">
                 <span class="ls-letter">{{ letter }}</span></div>
         </div>
         <div class="padding">
