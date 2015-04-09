@@ -1,4 +1,4 @@
-var gp = angular.module('gameplay', ['ionic', 'selectLetter', 'server']);
+var gp = angular.module('gameplay', ['ionic', 'server']);
 
 gp.constant('fieldConst', {
     max: 5,
@@ -12,19 +12,6 @@ gp.constant('fieldConst', {
         nextPossible: ['fieldcell', 'fieldcell-can-be-next']
     }
 });
-//
-//gp.config(function ($stateProvider) {
-//    $stateProvider
-//        .state('tabs.gameplay', {
-//            url: '/gameplay',
-//            views: {
-//                'matchlist': {
-//                    templateUrl: 'tpl/gameplay.html',
-//                    controller: 'gameplayController'
-//                }
-//            }
-//        });
-//});
 
 function isCellFree(cell) { return cell == null || !cell.val || cell.val == ''; }
 

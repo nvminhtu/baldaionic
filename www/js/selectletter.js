@@ -1,6 +1,5 @@
-var sl = angular.module('selectLetter', ['ionic']);
-
-sl.controller('selectLetterController', function ($ionicModal, $scope) {
+angular.module('gameplay')
+    .controller('selectLetterController', function ($ionicModal, $scope) {
 
     $ionicModal.fromTemplateUrl('tpl/selectletter.html', {
         scope: $scope,
