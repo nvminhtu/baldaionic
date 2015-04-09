@@ -7675,3 +7675,10 @@ a.button {
 .bg {
   background-image: url(../img/bg.jpg);
   background-repeat: repeat; }
+
+/*Error*/
+.error {
+  color: red; }
+
+label.error {
+  border-bottom: 2px solid red; }

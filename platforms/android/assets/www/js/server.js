@@ -1,6 +1,6 @@
-var sv = angular.module('server', ['ionic', 'config', 'util']);
+var sv = angular.module('server', ['ionic', 'config', 'util', 'social']);
 
-sv.service('server', function($http, config, $rootScope, $q) {
+sv.service('server', function($http, config, $rootScope) {
 
     var that = this;
     that.sessionKey = '';

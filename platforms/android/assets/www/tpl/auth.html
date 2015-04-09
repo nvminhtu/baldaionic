@@ -2,14 +2,14 @@
     <ion-content class="bg">
         <div class="list">
             <h4 class="item">Добро пожаловать в Балду!</h4>
-            <label class="item item-input">
+            <label class="item item-input" ng-class="{ error: model.isError }">
                 <span class="input-label">Имя:</span>
-                <input type="text" ng-model="user.name" placeholder="Введите свое имя...">
+                <input type="text" ng-model="model.name" placeholder="Введите свое имя...">
             </label>
+            <div class="error padding" ng-if="model.isError">Имя должно быть от 2 до 32 символов длиной</div>
         </div>
         <div class="padding">
-            <button class="button button-block" ng-click="authorizeMe(user)" ng-show="!loading">Войти</button>
-            <ion-spinner icon="spiral"></ion-spinner>
+            <button class="button button-block" ng-click="authorizeMe()">Войти</button>
         </div>
     </ion-content>
 </ion-view>

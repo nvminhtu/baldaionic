@@ -83,7 +83,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             }
         });
 
-    $urlRouterProvider.otherwise('/tabs/matchlist');
+    $urlRouterProvider.otherwise('/auth');
 });
 
 
@@ -91,7 +91,11 @@ app.controller('matchlistController', function ($scope, $state) {
 
 });
 
-app.controller('settingsController', function ($scope, server) {
+app.controller('settingsController', function ($scope, server, $ionicLoading) {
+
+    //$ionicLoading.show({
+    //    template: '<ion-spinner class="spinner-light" icon="android"></ion-spinner><br>Загрузка...'
+    //});
 
     var m = $scope.model = {
         prices: {}
@@ -102,18 +106,26 @@ app.controller('settingsController', function ($scope, server) {
     });
 });
 
-app.controller('authController', function ($scope, $state, $ionicLoading) {
+app.controller('authController', function ($scope, $state, $ionicLoading, socialProvider) {
 
-    $scope.user = {
+    var m = $scope.model = {
         name: '',
-        loading: false
+        loading: false,
+        isError: true
     };
+
+    
+    $scope.$watch('model.name', function() {
+        var name = m.name.trim();
+        m.isError = name.length < 2 || name.length >= 32;
+        socialProvider.name = name;
+    });
 
     $scope.gotoGameplay = function() {
         $state.go('gameplay');
     };
 
-    $scope.authorizeMe = function(user) {
+    $scope.authorizeMe = function() {
         //if(user.name.length > 0) {
         //
         //    $state.go('tabs.newgame');
@@ -126,6 +138,8 @@ app.controller('authController', function ($scope, $state, $ionicLoading) {
         //}
         //else
         //    alert('No name');
-        $state.go('tabs.newgame');
+        if(!m.isError)
+            $state.go('tabs.newgame');
+        console.log(socialProvider.name);
     };
 });

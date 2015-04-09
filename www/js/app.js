@@ -114,7 +114,7 @@ app.controller('authController', function ($scope, $state, $ionicLoading, social
         isError: true
     };
 
-    
+
     $scope.$watch('model.name', function() {
         var name = m.name.trim();
         m.isError = name.length < 2 || name.length >= 32;

@@ -1,17 +1,31 @@
-angular.module('util', [])
-    .factory('$localStorage', ['$window', function($window) {
-        return {
-            set: function(key, value) {
-                $window.localStorage[key] = value;
-            },
-            get: function(key, defaultValue) {
-                return $window.localStorage[key] || defaultValue;
-            },
-            setObject: function(key, value) {
-                $window.localStorage[key] = JSON.stringify(value);
-            },
-            getObject: function(key) {
-                return JSON.parse($window.localStorage[key] || '{}');
-            }
+var util = angular.module('util', []);
+
+util.factory('$localStorage', ['$window', function($window) {
+    return {
+        set: function(key, value) {
+            $window.localStorage[key] = value;
+        },
+        get: function(key, defaultValue) {
+            return $window.localStorage[key] || defaultValue;
+        },
+        setObject: function(key, value) {
+            $window.localStorage[key] = JSON.stringify(value);
+        },
+        getObject: function(key) {
+            return JSON.parse($window.localStorage[key] || '{}');
         }
-    }]);
+    }
+}]);
+
+util.factory('util', function () {
+    return {
+        makeID: function(len) {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            len = len || 5;
+            for( var i=0; i < len; i++ )
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+            return text;
+        }
+    };
+});
