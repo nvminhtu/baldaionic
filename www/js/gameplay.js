@@ -71,7 +71,6 @@ function SelectionPath() {
         if(i !== null)
         {
             t.path = t.path.slice(0, i + 1);
-            console.log('i = ', i, t.path);
             return false;
         }
         else if(isCellFree(cell) && t.getNewCell() != null)

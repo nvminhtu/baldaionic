@@ -1,5 +1,5 @@
 
-angular.module('balda').controller('authController', function ($scope, $state, $ionicLoading, socialProvider) {
+angular.module('balda').controller('authController', function ($scope, $state, $ionicLoading, socialProvider, server) {
 
     var m = $scope.model = {
         name: '',
@@ -31,8 +31,9 @@ angular.module('balda').controller('authController', function ($scope, $state, $
         //}
         //else
         //    alert('No name');
-        if(!m.isError)
+        if(!m.isError) {
+            server.login();
             $state.go('tabs.newgame');
-        console.log(socialProvider.name);
+        }
     };
 });
