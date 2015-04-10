@@ -22,15 +22,30 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller: 'authController'
         })
         .state('tabs', {
-            url: '/tab',
+            url: '/tabs',
             abstract: true,
-            templateUrl: 'tpl/tabs.html'
+            templateUrl: 'tpl/tabs.html',
+            controller: function($scope, $ionicHistory) {
+                $scope.onTabSelected = function() {
+                    $ionicHistory.clearHistory();
+                }
+            }
         })
         .state('tabs.matchlist', {
             url: '/matchlist',
             views: {
                 'matchlist': {
-                    templateUrl: 'tpl/matchlist.html'
+                    templateUrl: 'tpl/matchlist.html',
+                    controller: 'matchlistController'
+                }
+            }
+        })
+        .state('tabs.gameplay', {
+            url: '/gameplay',
+            views: {
+                'matchlist': {
+                    templateUrl: 'tpl/gameplay.html',
+                    controller: 'gameplayController'
                 }
             }
         })
@@ -68,21 +83,19 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             }
         });
 
-    $stateProvider
-        .state('tabs.gameplay', {
-            url: '/gameplay',
-            views: {
-                'newgame': {
-                    templateUrl: 'tpl/gameplay.html',
-                    controller: 'gameplayController'
-                }
-            }
-        });
-
     $urlRouterProvider.otherwise('/auth');
 });
 
-app.controller('settingsController', function ($scope, server) {
+
+app.controller('matchlistController', function ($scope, $state) {
+
+});
+
+app.controller('settingsController', function ($scope, server, $ionicLoading) {
+
+    //$ionicLoading.show({
+    //    template: '<ion-spinner class="spinner-light" icon="android"></ion-spinner><br>Загрузка...'
+    //});
 
     var m = $scope.model = {
         prices: {}
@@ -91,32 +104,4 @@ app.controller('settingsController', function ($scope, server) {
     server.getPrices().then(function() {
         m.prices = server.prices;
     });
-});
-
-app.controller('authController', function ($scope, $state, $ionicLoading) {
-
-    $scope.user = {
-        name: '',
-        loading: false
-    };
-
-    $scope.gotoGameplay = function() {
-        $state.go('gameplay');
-    };
-
-    $scope.authorizeMe = function(user) {
-        //if(user.name.length > 0) {
-        //
-        //    $state.go('tabs.newgame');
-        //    //user.name = '';
-        //    //$scope.loading = true;
-        //
-        //    // $ionicLoading.show({
-        //    //     template: 'Please wait while we register your device...'
-        //    // });
-        //}
-        //else
-        //    alert('No name');
-        $state.go('tabs.newgame');
-    };
 });

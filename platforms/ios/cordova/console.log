@@ -39,3 +39,12 @@
 2015-04-07 17:53:29.259 Balda[708:27385] Finished load of: file:///Users/tirinox1/Library/Developer/CoreSimulator/Devices/7E8575DD-EC47-4BA9-A062-E840E9602A65/data/Containers/Bundle/Application/0007075F-8B17-4087-96F9-43636C1D0545/Balda.app/www/index.html#/auth
 2015-04-07 17:53:35.416 Balda[708:27385] word =  БАЛДО
 2015-04-07 22:31:54.659 Balda[708:98439] Terminating since there is no system app.
+2015-04-09 10:58:55.077 Balda[1579:282619] DiskCookieStorage changing policy from 2 to 0, cookie file: file:///Users/koltsov/Library/Developer/CoreSimulator/Devices/515D27B9-78E7-4E14-AE73-82BD3F56F660/data/Containers/Data/Application/2E1A0A57-48A6-4111-B06C-1A288940ACBE/Library/Cookies/Cookies.binarycookies
+2015-04-09 10:58:55.435 Balda[1579:282619] Apache Cordova native platform version 3.8.0 is starting.
+2015-04-09 10:58:55.435 Balda[1579:282619] Multi-tasking -> Device: YES, App: YES
+2015-04-09 10:58:55.478 Balda[1579:282619] Unlimited access to network resources
+2015-04-09 10:58:56.062 Balda[1579:282619] [CDVTimer][keyboard] 0.065029ms
+2015-04-09 10:58:56.062 Balda[1579:282619] [CDVTimer][TotalPluginStartup] 0.225008ms
+2015-04-09 10:58:56.648 Balda[1579:282619] Resetting plugins due to page load.
+2015-04-09 10:58:56.986 Balda[1579:282619] Finished load of: file:///Users/koltsov/Library/Developer/CoreSimulator/Devices/515D27B9-78E7-4E14-AE73-82BD3F56F660/data/Containers/Bundle/Application/60461822-4F1A-40C8-8FE5-EA092830B185/Balda.app/www/index.html
+2015-04-09 13:16:40.382 Balda[1579:765549] Terminating since there is no system app.

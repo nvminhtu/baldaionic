@@ -1,4 +1,4 @@
-var gp = angular.module('gameplay', ['ionic', 'selectLetter', 'server']);
+var gp = angular.module('gameplay', ['ionic', 'server']);
 
 gp.constant('fieldConst', {
     max: 5,
@@ -12,19 +12,6 @@ gp.constant('fieldConst', {
         nextPossible: ['fieldcell', 'fieldcell-can-be-next']
     }
 });
-//
-//gp.config(function ($stateProvider) {
-//    $stateProvider
-//        .state('tabs.gameplay', {
-//            url: '/gameplay',
-//            views: {
-//                'matchlist': {
-//                    templateUrl: 'tpl/gameplay.html',
-//                    controller: 'gameplayController'
-//                }
-//            }
-//        });
-//});
 
 function isCellFree(cell) { return cell == null || !cell.val || cell.val == ''; }
 
@@ -60,13 +47,16 @@ function SelectionPath() {
         }
         return null;
     };
-    t.hasInPathCoord = function(x, y) {
+    t.indexOfCellWithCoords = function(x, y) {
         for(var i = 0; i < t.path.length; ++i)
         {
             var cell = t.path[i];
-            if(cell.x == x && cell.y == y) return true;
+            if(cell.x == x && cell.y == y) return i;
         }
-        return false;
+        return null;
+    };
+    t.hasInPathCoord = function(x, y) {
+        return t.indexOfCellWithCoords(x, y) !== null;
     };
     t.isNeighborToLast = function(x, y, defaultIfNotLast) {
         var last = t.getLast();
@@ -77,13 +67,10 @@ function SelectionPath() {
     t.pushCell = function(cell) {
         var l = t.getLength();
         var x = cell.x, y = cell.y;
-        if(t.hasInPathCoord(x, y))
+        var i = t.indexOfCellWithCoords(x, y);
+        if(i !== null)
         {
-            if(l >= 2) {
-                var cellBeforeLast = t.path[l - 2];
-                if(cellBeforeLast.x == x && cellBeforeLast.y == y)
-                    t.deleteLast();
-            }
+            t.path = t.path.slice(0, i + 1);
             return false;
         }
         else if(isCellFree(cell) && t.getNewCell() != null)
@@ -217,13 +204,20 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
 
     function finishLetterSelection(letter)
     {
-        var newCell = m.selectedPath.getNewCell();
-        if(newCell)
+        if(letter == null)
         {
-            newCell.val = letter;
-            syncField();
-            console.log('word = ', m.selectedPath.getWord());
+            m.selectedPath.clear();
         }
+        else
+        {
+            var newCell = m.selectedPath.getNewCell();
+            if(newCell)
+            {
+                newCell.val = letter;
+                console.log('word = ', m.selectedPath.getWord());
+            }
+        }
+        syncField();
     }
 
     $scope.cellTrackerMove = function(x, y) {
