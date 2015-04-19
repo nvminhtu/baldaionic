@@ -69,7 +69,8 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url: '/profile',
             views: {
                 'profile': {
-                    templateUrl: 'tpl/profile.html'
+                    templateUrl: 'tpl/profile.html',
+                    controller: 'myProfileController'
                 }
             }
         })
@@ -91,17 +92,13 @@ app.controller('matchlistController', function ($scope, $state) {
 
 });
 
-app.controller('settingsController', function ($scope, server, $ionicLoading) {
-
-    //$ionicLoading.show({
-    //    template: '<ion-spinner class="spinner-light" icon="android"></ion-spinner><br>Загрузка...'
-    //});
+app.controller('settingsController', function ($scope, prices) {
 
     var m = $scope.model = {
         prices: {}
     };
 
-    server.getPrices().then(function() {
-        m.prices = server.prices;
+    prices.load().then(function() {
+        m.prices = prices.prices;
     });
 });

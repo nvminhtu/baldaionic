@@ -1,12 +1,17 @@
 
-angular.module('balda').controller('authController', function ($scope, $state, $ionicLoading, socialProvider, server) {
+var app = angular.module('balda');
+
+app.run(function (socialProvider, server, $state) {
+
+});
+
+app.controller('authController', function ($scope, $state, $ionicLoading, socialProvider, server) {
 
     var m = $scope.model = {
         name: '',
         loading: false,
         isError: true
     };
-
 
     $scope.$watch('model.name', function() {
         var name = m.name.trim();
@@ -18,22 +23,21 @@ angular.module('balda').controller('authController', function ($scope, $state, $
         $state.go('gameplay');
     };
 
+    function loginAndGo()
+    {
+        server.login();
+        $state.go('tabs.newgame');
+    }
+
+
+    if(socialProvider.hasLoginData())
+    {
+        loginAndGo();
+    }
+
     $scope.authorizeMe = function() {
-        //if(user.name.length > 0) {
-        //
-        //    $state.go('tabs.newgame');
-        //    //user.name = '';
-        //    //$scope.loading = true;
-        //
-        //    // $ionicLoading.show({
-        //    //     template: 'Please wait while we register your device...'
-        //    // });
-        //}
-        //else
-        //    alert('No name');
         if(!m.isError) {
-            server.login();
-            $state.go('tabs.newgame');
+            loginAndGo();
         }
     };
 });

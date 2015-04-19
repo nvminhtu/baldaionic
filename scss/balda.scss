@@ -98,3 +98,12 @@
 label.error {
   border-bottom: 2px solid red;
 }
+
+/*User pic*/
+img.userpic {
+  width: 64px;
+  height: 64px;
+  float: left;
+  border: 2px solid white;
+  border-radius: 32px;
+}

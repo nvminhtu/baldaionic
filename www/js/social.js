@@ -31,6 +31,11 @@ soc.service('socialProvider', function($localStorage, util) {
         saveLoginData(generatePair());
     };
 
+    that.hasLoginData = function() {
+        var data = getLoginDataFromStorage();
+        return (data.uid && data.token);
+    };
+
     that.getLoginData = function() {
         var data = getLoginDataFromStorage();
         if(!data.uid || !data.token)
