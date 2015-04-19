@@ -13,7 +13,9 @@ app.run(function($ionicPlatform) {
     });
 });
 
-app.config(function ($stateProvider, $urlRouterProvider) {
+app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+
+    $ionicConfigProvider.tabs.position('top');
 
     $stateProvider
         .state('auth', {
