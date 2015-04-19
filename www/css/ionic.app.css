@@ -7696,3 +7696,8 @@ img.userpic {
   position: relative;
   left: 18px;
   top: 10px; }
+
+p.user-id {
+  left: 18px;
+  font-size: 12px;
+  position: relative; }
