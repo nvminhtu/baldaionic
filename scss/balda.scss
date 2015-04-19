@@ -104,6 +104,13 @@ img.userpic {
   width: 64px;
   height: 64px;
   float: left;
-  border: 2px solid white;
+  border: 2px solid #4499dd;
   border-radius: 32px;
+  vertical-align: middle;
+}
+
+.profile-header h1 {
+  position: relative;
+  left: 18px;
+  top: 10px;
 }

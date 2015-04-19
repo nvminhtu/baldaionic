@@ -1,11 +1,11 @@
 <ion-view view-title="Профиль">
     <ion-content class="bg">
         <div class="padding">
-            <h1>{{ model.me.name }}</h1>
-            <small>ID: {{ model.me.id }}</small>
-            <dl>
-                <dd>ff</dd><dt>fef</dt>
-            </dl>
+            <div class="profile-header">
+                <user-pic photo-url="{{ model.me.photoURL }}"></user-pic>
+                <h1>{{ model.me.name }}</h1>
+                <small>ID: {{ model.me.id }}</small>
+            </div>
         </div>
 
     </ion-content>
