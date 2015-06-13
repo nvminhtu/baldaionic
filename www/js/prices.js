@@ -1,6 +1,8 @@
 angular.module('server').service('prices', function(server) {
     var that = this;
 
+    that.prices = {};
+
     that.load = function() {
         return server.rawRequest({
             method: 'prices'
@@ -13,5 +15,4 @@ angular.module('server').service('prices', function(server) {
             that.prices = prices;
         });
     };
-
 });
