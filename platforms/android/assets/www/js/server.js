@@ -7,6 +7,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider) {
     that.sessionAcquireTS = 0;
     that.prices = {};
 
+    var badSessionError = -1013;
     var sessionExpiration = 60 * 59; // 59 min
 
     function rawPromise(data) {
@@ -17,7 +18,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider) {
         return r && r.result && r.result == 'good';
     }
 
-    function rawRequest(data) {
+    that.rawRequest = function(data) {
         return rawPromise(data).success(function (r) {
             if(!isGood(r)) {
                 r.type = 'logic';
@@ -26,15 +27,19 @@ sv.service('server', function($http, config, $rootScope, socialProvider) {
         }).error( function () {
             that.onError({type: 'inet'});
         });
-    }
+    };
 
     that.login = function() {
         var loginData = socialProvider.getLoginData();
         loginData.method = 'login';
 
         $rootScope.$broadcast('loggingIn', 'start');
-        rawRequest(loginData).success(function(r) {
+        that.rawRequest(loginData).success(function(r) {
+            // todo
             console.log('login', r);
+            that.me = that.getAnswer(r, 'user');
+            that.sessionKey = that.getAnswer(r, 'login').sid;
+
         }).finally(function() {
             $rootScope.$broadcast('loggingIn', 'end');
         });
@@ -63,21 +68,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider) {
                     res.push(a[i][name]);
         return res;
     };
-
-    that.getPrices = function() {
-        return rawRequest({
-            method: 'prices'
-        }).success(function (r) {
-            var prices = that.getAnswer(r, 'prices');
-            angular.forEach(prices, function (v, k) {
-                v.name = k;
-            });
-            that.prices = prices;
-        });
-    };
-
 });
-
 
 app.controller('errorController', function ($rootScope, $scope, $ionicPopup, $ionicLoading) {
 

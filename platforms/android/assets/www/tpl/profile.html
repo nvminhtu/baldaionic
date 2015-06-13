@@ -1,5 +1,20 @@
 <ion-view view-title="Профиль">
     <ion-content class="bg">
+        <div class="padding">
+            <div class="profile-header">
+
+                <user-pic photo-url="{{ model.me.photoURL }}"></user-pic>
+                <div>
+                    <h1>{{ model.me.name }}</h1>
+                    <p class="user-id">ID: {{ model.me.id }}</p>
+                </div>
+                <p>Побед: {{ model.me.JSON.win }}</p>
+                <p>Поражений: {{ model.me.JSON.lose }}</p>
+                <p>Сдался: {{ model.me.JSON.resign }}</p>
+                <p>Лучшее слово: {{ model.me.JSON.best_word || '-' }}</p>
+                <p>Ср. балл за ход: {{ model.me.JSON.avg_s_per_w }}</p>
+            </div>
+        </div>
 
     </ion-content>
 </ion-view>
