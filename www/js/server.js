@@ -38,8 +38,12 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
         });
     };
 
-    that.requestSafe = function(data) {
+    that.isLoggedIn = function() {
+        return that.sessionKey != '' && isSessionExpired();
+    };
 
+    that.requestSafe = function(data) {
+        // todo
     };
 
     that.login = function() {
@@ -61,7 +65,6 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
     that.onError = function(r) {
         $rootScope.$broadcast('serverError', r);
     };
-
 
     that.getAnswer = function(r, name) {
         var a = r['answers'];
@@ -98,15 +101,4 @@ app.controller('errorController', function ($rootScope, $scope, $ionicPopup, $io
         });
     });
 
-    $rootScope.$on('loggingIn', function (event, state) {
-
-        $scope.loadingType = 'auth';
-        if(state == 'start')
-            $ionicLoading.show({
-                scope: $scope,
-                templateUrl: 'tpl/loading.html'
-            });
-        else
-            $ionicLoading.hide();
-    });
 });

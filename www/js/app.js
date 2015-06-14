@@ -105,3 +105,26 @@ app.controller('settingsController', function ($scope, prices) {
         m.prices = prices.prices;
     });
 });
+
+app.controller('appController', function ($rootScope, $scope, $ionicPopup, $ionicLoading, server, $state) {
+
+    $rootScope.$on('loggingIn', function (event, state) {
+
+        $scope.loadingType = 'auth';
+        if(state == 'start')
+            $ionicLoading.show({
+                scope: $scope,
+                templateUrl: 'tpl/loading.html'
+            });
+        else {
+            $ionicLoading.hide();
+
+            if(server.isLoggedIn()) {
+                $state.go('tabs.newgame');
+            } else {
+                $state.go('auth');
+            }
+
+        }
+    });
+});
