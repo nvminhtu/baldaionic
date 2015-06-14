@@ -7,7 +7,7 @@ angular.module('server').service('tournament', function(server) {
         return server.rawRequest({
             method: 'leaderboardTop'
         }).success(function (r) {
-            // todo: parse leaderboard
+            // todo: parse leaderboard test
         });
     };
 });
