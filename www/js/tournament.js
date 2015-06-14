@@ -8,6 +8,15 @@ angular.module('server').service('tournament', function(server) {
             method: 'leaderboardTop'
         }).success(function (r) {
             // todo: parse leaderboard test
+
         });
     };
+});
+
+
+app.controller('tournamentController', function ($scope, tournament) {
+    var m = $scope.model = {
+        top: tournament.topPlayers
+    };
+
 });

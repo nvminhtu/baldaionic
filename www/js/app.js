@@ -63,7 +63,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             url: '/tournament',
             views: {
                 'tournament': {
-                    templateUrl: 'tpl/tournament.html'
+                    templateUrl: 'tpl/tournament.html',
+                    controller: 'tournamentController'
                 }
             }
         })

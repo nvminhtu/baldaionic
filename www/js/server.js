@@ -1,11 +1,16 @@
 var sv = angular.module('server', ['ionic', 'config', 'util', 'social']);
 
-sv.service('server', function($http, config, $rootScope, socialProvider) {
+sv.service('server', function($http, config, $rootScope, socialProvider, util) {
 
     var that = this;
     that.sessionKey = '';
     that.sessionAcquireTS = 0;
     that.prices = {};
+
+    that.methodsWithNoSession = [
+        'prices',
+        'login'
+    ];
 
     var badSessionError = -1013;
     var sessionExpiration = 60 * 59; // 59 min
@@ -16,6 +21,10 @@ sv.service('server', function($http, config, $rootScope, socialProvider) {
 
     function isGood(r) {
         return r && r.result && r.result == 'good';
+    }
+
+    function isSessionExpired() {
+        return (util.now() - that.sessionAcquireTS) > sessionExpiration;
     }
 
     that.rawRequest = function(data) {
@@ -29,14 +38,18 @@ sv.service('server', function($http, config, $rootScope, socialProvider) {
         });
     };
 
+    that.requestSafe = function(data) {
+
+    };
+
     that.login = function() {
         var loginData = socialProvider.getLoginData();
         loginData.method = 'login';
 
         $rootScope.$broadcast('loggingIn', 'start');
         that.rawRequest(loginData).success(function(r) {
-            // todo
-            console.log('login', r);
+
+            console.log('loginSuccess', r);
             that.me = that.getAnswer(r, 'user');
             that.sessionKey = that.getAnswer(r, 'login').sid;
 
