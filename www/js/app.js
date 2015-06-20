@@ -1,4 +1,10 @@
-var app = angular.module('balda', ['ionic', 'gameplay', 'util']);
+
+var underscore = angular.module('underscore', []);
+underscore.factory('_', ['$window', function($window) {
+    return $window._; // assumes underscore has already been loaded on the page
+}]);
+
+var app = angular.module('balda', ['ionic', 'gameplay', 'util', 'underscore']);
 
 app.run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -55,7 +61,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             url: '/newgame',
             views: {
                 'newgame': {
-                    templateUrl: 'tpl/newgame.html'
+                    templateUrl: 'tpl/newgame.html',
+                    controller: 'newGameController'
                 }
             }
         })
@@ -95,10 +102,15 @@ app.controller('matchlistController', function ($scope, $state) {
 
 });
 
-app.controller('settingsController', function ($scope, prices) {
+app.controller('settingsController', function ($scope, prices, $state, server) {
 
     var m = $scope.model = {
         prices: {}
+    };
+
+    $scope.logout = function() {
+        $state.go('auth');
+        server.logout();
     };
 
     prices.load().then(function() {
@@ -106,9 +118,9 @@ app.controller('settingsController', function ($scope, prices) {
     });
 });
 
-app.controller('appController', function ($rootScope, $scope, $ionicPopup, $ionicLoading, server, $state) {
+app.controller('appController', function ($scope, $ionicPopup, $ionicLoading, server, $state) {
 
-    $rootScope.$on('loggingIn', function (event, state) {
+    server.eventScope.$on('loggingIn', function (event, state) {
 
         $scope.loadingType = 'auth';
         if(state == 'start')
@@ -128,9 +140,9 @@ app.controller('appController', function ($rootScope, $scope, $ionicPopup, $ioni
     });
 });
 
-app.controller('errorController', function ($rootScope, $scope, $ionicPopup) {
+app.controller('errorController', function (server, $scope, $ionicPopup) {
 
-    $rootScope.$on('serverError', function (event, data) {
+    server.eventScope.$on('serverError', function (event, data) {
         $scope.data = data;
 
         $ionicPopup.show({

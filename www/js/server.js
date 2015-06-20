@@ -1,16 +1,17 @@
-var sv = angular.module('server', ['ionic', 'config', 'util', 'social']);
+var sv = angular.module('server', ['ionic', 'config', 'util', 'social', 'underscore']);
 
-sv.service('server', function($http, config, $rootScope, socialProvider, util) {
+sv.service('server', function($http, config, $rootScope, socialProvider, util, $interval, _) {
 
     var that = this;
-    that.sessionKey = '';
-    that.sessionAcquireTS = 0;
+
     that.prices = {};
 
     that.methodsWithNoSession = [
         'prices',
         'login'
     ];
+
+    that.eventScope = $rootScope.$new();
 
     var ERROR_BAD_SESSION = -1013;
     var SESSION_EXPIRATION = 60 * 59; // 59 min
@@ -24,7 +25,20 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
     }
 
     function isSessionExpired() {
-        return (util.now() - that.sessionAcquireTS) > sessionExpiration;
+        return (util.now() - that.sessionAcquireTS) > SESSION_EXPIRATION;
+    }
+
+    function processAnswers(answers) {
+
+        for(var i = 0; i < answers.length; ++i) {
+            var a = answers[i];
+            var keys = _.keys(a);
+            if(keys.length > 0)
+                that.eventScope.$broadcast('serverAnswer', {
+                    name: keys[0],
+                    data: a[keys[0]]
+                });
+        }
     }
 
     that.rawRequest = function(data) {
@@ -32,6 +46,8 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
             if(!isGood(r)) {
                 r.type = 'logic';
                 that.onError(r);
+            } else {
+                processAnswers(r['answers']);
             }
         }).error( function () {
             that.onError({type: 'inet'});
@@ -42,15 +58,23 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
         return that.sessionKey != '' && isSessionExpired();
     };
 
-    that.requestSafe = function(data) {
-        // todo
-    };
+    var loggingIn = false;
 
     that.login = function() {
+
+        if(loggingIn)
+        {
+            console.log('login exit; already in progess...');
+            return;
+        }
+
         var loginData = socialProvider.getLoginData();
         loginData.method = 'login';
 
-        $rootScope.$broadcast('loggingIn', 'start');
+        loggingIn = true;
+        console.log('logging in...');
+
+        that.eventScope.$broadcast('loggingIn', 'start');
         that.rawRequest(loginData).success(function(r) {
 
             console.log('loginSuccess', r);
@@ -58,12 +82,13 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
             that.sessionKey = that.getAnswer(r, 'login').sid;
 
         }).finally(function() {
-            $rootScope.$broadcast('loggingIn', 'end');
+            loggingIn = false;
+            that.eventScope.$broadcast('loggingIn', 'end');
         });
     };
 
     that.onError = function(r) {
-        $rootScope.$broadcast('serverError', r);
+        that.eventScope.$broadcast('serverError', r);
     };
 
     that.getAnswer = function(r, name) {
@@ -84,5 +109,34 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
                     res.push(a[i][name]);
         return res;
     };
+
+    that.logout = function() {
+        that.sessionKey = '';
+        that.sessionAcquireTS = 0;
+    };
+
+    that.logout();
+
+    $interval(function() {
+        console.log('tick!');
+    }, 5000);
 });
 
+sv.service('prices', function(server) {
+    var that = this;
+
+    that.prices = {};
+
+    that.load = function() {
+        return server.rawRequest({
+            method: 'prices'
+        }).success(function (r) {
+            var prices = server.getAnswer(r, 'prices');
+            angular.forEach(prices, function (v, k) {
+                v.name = k;
+            });
+
+            that.prices = prices;
+        });
+    };
+});
