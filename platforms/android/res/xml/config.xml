@@ -41,4 +41,7 @@
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="1000" />
     <icon density="xhdpi" src="resources/android/icon/drawable-xhdpi-icon.png" />
+    <feature name="PushPlugin">
+        <param name="android-package" value="com.plugin.gcm.PushPlugin" />
+    </feature>
 </widget>

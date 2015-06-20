@@ -4,13 +4,12 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
 
     var that = this;
 
-    that.prices = {};
-
     that.methodsWithNoSession = [
         'prices',
         'login'
     ];
-
+    that.sessionKey = '';
+    that.sessionAcquireTS = 0;
     that.eventScope = $rootScope.$new();
 
     var ERROR_BAD_SESSION = -1013;
@@ -24,9 +23,9 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
         return r && r.result && r.result == 'good';
     }
 
-    function isSessionExpired() {
+    that.isSessionExpired = function() {
         return (util.now() - that.sessionAcquireTS) > SESSION_EXPIRATION;
-    }
+    };
 
     function processAnswers(answers) {
 
@@ -42,28 +41,35 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
     }
 
     that.rawRequest = function(data) {
+        console.log('Server Request: ', data);
         return rawPromise(data).success(function (r) {
             if(!isGood(r)) {
                 r.type = 'logic';
                 that.onError(r);
+                console.log('Server error (logic): ', r);
             } else {
+                console.log('Server Response: ', r);
                 processAnswers(r['answers']);
             }
         }).error( function () {
+            console.error('Server error (network)!');
             that.onError({type: 'inet'});
         });
     };
 
+    function hasSession() {
+        return that.sessionKey != '';
+    }
+
     that.isLoggedIn = function() {
-        return that.sessionKey != '' && isSessionExpired();
+        return hasSession() && that.isSessionExpired();
     };
 
     var loggingIn = false;
 
     that.login = function() {
 
-        if(loggingIn)
-        {
+        if(loggingIn) {
             console.log('login exit; already in progess...');
             return;
         }
@@ -77,9 +83,9 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
         that.eventScope.$broadcast('loggingIn', 'start');
         that.rawRequest(loginData).success(function(r) {
 
-            console.log('loginSuccess', r);
             that.me = that.getAnswer(r, 'user');
             that.sessionKey = that.getAnswer(r, 'login').sid;
+            that.sessionAcquireTS = util.now();
 
         }).finally(function() {
             loggingIn = false;
@@ -118,7 +124,10 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
     that.logout();
 
     $interval(function() {
-        console.log('tick!');
+        if(hasSession() && that.isSessionExpired()) {
+            console.log('Server: session expired!');
+            that.login();
+        }
     }, 5000);
 });
 
