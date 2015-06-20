@@ -12,8 +12,8 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
         'login'
     ];
 
-    var badSessionError = -1013;
-    var sessionExpiration = 60 * 59; // 59 min
+    var ERROR_BAD_SESSION = -1013;
+    var SESSION_EXPIRATION = 60 * 59; // 59 min
 
     function rawPromise(data) {
         return $http.post(config.server, data);
@@ -86,19 +86,3 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util) {
     };
 });
 
-app.controller('errorController', function ($rootScope, $scope, $ionicPopup, $ionicLoading) {
-
-    $rootScope.$on('serverError', function (event, data) {
-        $scope.data = data;
-
-        $ionicPopup.show({
-            title: 'Ошибка!',
-            scope: $scope,
-            templateUrl: 'tpl/error.html',
-            buttons: [
-                { text: 'ОK' }
-            ]
-        });
-    });
-
-});

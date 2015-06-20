@@ -124,7 +124,23 @@ app.controller('appController', function ($rootScope, $scope, $ionicPopup, $ioni
             } else {
                 $state.go('auth');
             }
-
         }
     });
+});
+
+app.controller('errorController', function ($rootScope, $scope, $ionicPopup) {
+
+    $rootScope.$on('serverError', function (event, data) {
+        $scope.data = data;
+
+        $ionicPopup.show({
+            title: 'Ошибка!',
+            scope: $scope,
+            templateUrl: 'tpl/error.html',
+            buttons: [
+                { text: 'ОK' }
+            ]
+        });
+    });
+
 });
