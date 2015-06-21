@@ -22,7 +22,7 @@ package ru.tirinox.balda;
 import android.os.Bundle;
 import org.apache.cordova.*;
 
-public class MainActivity extends CordovaActivity
+public class BaldaApp extends CordovaActivity
 {
     @Override
     public void onCreate(Bundle savedInstanceState)

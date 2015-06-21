@@ -19,14 +19,13 @@ app.controller('authController', function ($scope, $state, $ionicLoading, social
         socialProvider.name = name;
     });
 
-    $scope.gotoGameplay = function() {
-        $state.go('gameplay');
-    };
+    //$scope.gotoGameplay = function() {
+    //    $state.go('gameplay');
+    //};
 
     function loginAndGo()
     {
         server.login();
-        $state.go('tabs.newgame');
     }
 
 

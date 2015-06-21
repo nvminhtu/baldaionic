@@ -3,18 +3,13 @@ angular.module('server').service('profileCache', function(server, _) {
 
     that.cache = {};
     that.cacheUid = {};
-    that.me = {};
 
     that.add = function(profile) {
-        console.log('adding profile', profile);
         if(profile && profile.id != 0) {
             var alreadyUser = that.cache[profile.id];
             if(!alreadyUser) alreadyUser = {};
             alreadyUser = that.cache[profile.id] = _.extend(alreadyUser, profile);
             that.cacheUid[profile.uid] = alreadyUser;
-
-            if(server.me && server.me.id == profile.id)
-                that.me = alreadyUser;
         }
     };
 
@@ -36,8 +31,6 @@ angular.module('server').service('profileCache', function(server, _) {
 
     };
 
-    server.eventScope.$on(server.EVENT_ANSWER + 'user', function(event, data) {
-        that.add(data);
-    });
+
 
 });

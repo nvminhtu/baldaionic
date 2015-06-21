@@ -4,9 +4,9 @@ underscore.factory('_', ['$window', function($window) {
     return $window._; // assumes underscore has already been loaded on the page
 }]);
 
-var app = angular.module('balda', ['ionic', 'gameplay', 'util', 'underscore']);
+var app = angular.module('balda', ['ionic', 'gameplay', 'util', 'underscore', 'server']);
 
-app.run(function($ionicPlatform) {
+app.run(function($ionicPlatform, profileCache) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -120,15 +120,15 @@ app.controller('settingsController', function ($scope, prices, $state, server) {
 
 app.controller('appController', function ($scope, $ionicPopup, $ionicLoading, server, $state) {
 
-    server.eventScope.$on('loggingIn', function (event, state) {
+    server.eventScope.$on(server.EVENT_LOGGIN_IN_STATUS, function (event, state) {
 
         $scope.loadingType = 'auth';
-        if(state == 'start')
+        if(state == server.START)
             $ionicLoading.show({
                 scope: $scope,
                 templateUrl: 'tpl/loading.html'
             });
-        else {
+        else if(state == server.END) {
             $ionicLoading.hide();
 
             if(server.isLoggedIn()) {
@@ -143,7 +143,7 @@ app.controller('appController', function ($scope, $ionicPopup, $ionicLoading, se
 app.controller('errorController', function (server, $scope, $ionicPopup) {
 
     server.eventScope.$on('serverError', function (event, data) {
-        $scope.data = data;
+        $scope.data = data.rawData;
 
         $ionicPopup.show({
             title: 'Ошибка!',

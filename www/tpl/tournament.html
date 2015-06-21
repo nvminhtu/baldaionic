@@ -1,5 +1,12 @@
 <ion-view view-title="Турнир">
     <ion-content class="bg">
-
+        <div class="list">
+            <div class="item" ng-repeat="player in model.topPlayers">
+                {{ player.profileID }} -- {{ player.score }}
+            </div>
+        </div>
+        <div class="padding">
+            <p>Всего {{ model.totalPlayers }} игроков.</p>
+        </div>
     </ion-content>
 </ion-view>

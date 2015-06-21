@@ -1,4 +1,10 @@
-var app = angular.module('balda', ['ionic', 'gameplay', 'util']);
+
+var underscore = angular.module('underscore', []);
+underscore.factory('_', ['$window', function($window) {
+    return $window._; // assumes underscore has already been loaded on the page
+}]);
+
+var app = angular.module('balda', ['ionic', 'gameplay', 'util', 'underscore']);
 
 app.run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -55,7 +61,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             url: '/newgame',
             views: {
                 'newgame': {
-                    templateUrl: 'tpl/newgame.html'
+                    templateUrl: 'tpl/newgame.html',
+                    controller: 'newGameController'
                 }
             }
         })
@@ -63,7 +70,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             url: '/tournament',
             views: {
                 'tournament': {
-                    templateUrl: 'tpl/tournament.html'
+                    templateUrl: 'tpl/tournament.html',
+                    controller: 'tournamentController'
                 }
             }
         })
@@ -94,13 +102,57 @@ app.controller('matchlistController', function ($scope, $state) {
 
 });
 
-app.controller('settingsController', function ($scope, prices) {
+app.controller('settingsController', function ($scope, prices, $state, server) {
 
     var m = $scope.model = {
         prices: {}
     };
 
+    $scope.logout = function() {
+        $state.go('auth');
+        server.logout();
+    };
+
     prices.load().then(function() {
         m.prices = prices.prices;
     });
+});
+
+app.controller('appController', function ($scope, $ionicPopup, $ionicLoading, server, $state) {
+
+    server.eventScope.$on('loggingIn', function (event, state) {
+
+        $scope.loadingType = 'auth';
+        if(state == 'start')
+            $ionicLoading.show({
+                scope: $scope,
+                templateUrl: 'tpl/loading.html'
+            });
+        else {
+            $ionicLoading.hide();
+
+            if(server.isLoggedIn()) {
+                $state.go('tabs.newgame');
+            } else {
+                $state.go('auth');
+            }
+        }
+    });
+});
+
+app.controller('errorController', function (server, $scope, $ionicPopup) {
+
+    server.eventScope.$on('serverError', function (event, data) {
+        $scope.data = data.rawData;
+
+        $ionicPopup.show({
+            title: 'Ошибка!',
+            scope: $scope,
+            templateUrl: 'tpl/error.html',
+            buttons: [
+                { text: 'ОK' }
+            ]
+        });
+    });
+
 });

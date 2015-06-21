@@ -19,9 +19,8 @@ app.directive('userPic', function () {
     }
 });
 
-app.controller('myProfileController', function ($scope, server) {
+app.controller('myProfileController', function ($scope, profileCache) {
     var m = $scope.model = {
-        me: server.me
+        me: profileCache.me
     };
-
 });
