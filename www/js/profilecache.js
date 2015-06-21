@@ -1,4 +1,4 @@
-angular.module('server').service('profileCache', function(server, _) {
+angular.module('server').service('profileCache', function(server, _, $q) {
     var that = this;
 
     that.cache = {};
@@ -15,6 +15,8 @@ angular.module('server').service('profileCache', function(server, _) {
 
             if(server.me && server.me.id == profile.id)
                 that.me = alreadyUser;
+
+            return alreadyUser;
         }
     };
 
@@ -26,14 +28,23 @@ angular.module('server').service('profileCache', function(server, _) {
         return that.cacheUid[uid];
     };
 
-    that.loadById = function(id, callback) {
-        var profile = null;
+    that.loadById = function(id) {
+
+        var profile;
         if(profile = that.getById(id)) {
-            if(callback) callback(profile);
+            var d = $q.defer();
+            d.resolve(profile);
+            return d.promise;
         } else {
-
+            return server.request({
+                method: 'userGet',
+                by: 'id',
+                uid: id
+            }).then(function () {
+                //console.log('ready to return user ' + id, that.getById(id));
+                return that.getById(id);
+            });
         }
-
     };
 
     server.eventScope.$on(server.EVENT_ANSWER + 'user', function(event, data) {

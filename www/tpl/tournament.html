@@ -2,11 +2,13 @@
     <ion-content class="bg">
         <div class="list">
             <div class="item" ng-repeat="player in model.topPlayers">
-                {{ player.profileID }} -- {{ player.score }}
+                <user-pic photo-url="{{ player.profile.photoURL }}"></user-pic>
+                <h2>{{ player.profile.name }}</h2>
+                <p>{{ player.score }}</p>
             </div>
         </div>
         <div class="padding">
-            <p>Всего {{ model.totalPlayers }} игроков.</p>
+            <h5>Всего {{ model.totalPlayers }} игроков.</h5>
         </div>
     </ion-content>
 </ion-view>

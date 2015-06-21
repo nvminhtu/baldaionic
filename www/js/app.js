@@ -142,9 +142,8 @@ app.controller('appController', function ($scope, $ionicPopup, $ionicLoading, se
 
 app.controller('errorController', function (server, $scope, $ionicPopup) {
 
-    server.eventScope.$on('serverError', function (event, data) {
-        $scope.data = data.rawData;
-
+    server.eventScope.$on(server.EVENT_SERVER_ERROR, function (event, data) {
+        $scope.data = data;
         $ionicPopup.show({
             title: 'Ошибка!',
             scope: $scope,

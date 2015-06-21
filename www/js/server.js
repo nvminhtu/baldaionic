@@ -28,7 +28,7 @@ function Answer(rawData)
     };
 }
 
-sv.service('server', function($http, config, $rootScope, socialProvider, util, $interval, _) {
+sv.service('server', function($http, config, $rootScope, socialProvider, util, $interval, _, $q) {
 
     var that = this;
 
@@ -73,6 +73,8 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
         }
     }
 
+
+
     that.rawRequest = function(data) {
         console.log('Server Request: ', data);
 
@@ -81,20 +83,20 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
 
         return rawPromise(data).then(function (r) {
             if(!r.isGood()) {
-                r.type = 'logic';
-                that.onError(r);
-                console.log('Server error (logic): ', r);
+                that.onError(r, 'logic');
+                return $q.reject(r);
             } else {
                 console.log('Server Response: ', r.rawData);
                 processAnswers(r);
             }
             return r;
         }, function (r) {
-            console.error('Server error (network)!');
-            that.onError({type: 'inet'});
+            that.onError({}, 'inet');
             return r;
         });
     };
+
+    that.request = that.rawRequest;
 
     function hasSession() {
         return that.sessionKey != '';
@@ -131,8 +133,15 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
         });
     };
 
-    that.onError = function(r) {
-        that.eventScope.$broadcast(that.EVENT_SERVER_ERROR, r);
+    that.onError = function(r, type) {
+        var result = r;
+        if(r instanceof Answer)
+            result = r.rawData;
+        result.type = type;
+
+        console.log('Server error (' + type + '): ', result);
+
+        that.eventScope.$broadcast(that.EVENT_SERVER_ERROR, result);
     };
 
     that.logout = function() {
@@ -156,7 +165,7 @@ sv.service('prices', function(server) {
     that.prices = {};
 
     that.load = function() {
-        return server.rawRequest({
+        return server.request({
             method: 'prices'
         }).then(function (r) {
             var prices = r.getAnswer('prices');

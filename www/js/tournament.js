@@ -5,7 +5,7 @@ angular.module('server').service('tournament', function(server) {
     that.totalPlayers = 0;
 
     that.load = function() {
-        return server.rawRequest({
+        return server.request({
             method: 'leaderboardTop'
         }).then(function (r) {
             that.topPlayers = r.getAnswer('leaderboardEntries');
@@ -16,7 +16,7 @@ angular.module('server').service('tournament', function(server) {
 });
 
 
-app.controller('tournamentController', function ($scope, tournament) {
+app.controller('tournamentController', function ($scope, tournament, profileCache, _) {
 
     var m = $scope.model = {
         topPlayers: [],
@@ -27,6 +27,11 @@ app.controller('tournamentController', function ($scope, tournament) {
         tournament.load().then(function() {
             m.topPlayers = tournament.topPlayers;
             m.totalPlayers = tournament.totalPlayers;
+            _.each(m.topPlayers, function (player) {
+                 profileCache.loadById(player.profileID).then(function (profile) {
+                    player.profile = profile;
+                 });
+            });
         });
     });
 
