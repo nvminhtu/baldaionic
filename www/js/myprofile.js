@@ -10,14 +10,6 @@ app.directive('fallbackSrc', function () {
     };
 });
 
-app.directive('userPic', function () {
-    return {
-        restrict: 'EA',
-        template: function(element, attrs) {
-            return '<img class="userpic" src="' + attrs.photoUrl + '" fallback-src="img/blank-avatar.png">';
-        }
-    }
-});
 
 app.controller('myProfileController', function ($scope, profileCache) {
     var m = $scope.model = {

@@ -140,11 +140,11 @@ app.controller('appController', function ($scope, $ionicPopup, $ionicLoading, se
     });
 });
 
-app.controller('errorController', function (server, $scope, $ionicPopup) {
+app.controller('errorController', function (server, $scope, $ionicPopup, $timeout) {
 
     server.eventScope.$on(server.EVENT_SERVER_ERROR, function (event, data) {
         $scope.data = data;
-        $ionicPopup.show({
+        var errPop = $ionicPopup.show({
             title: 'Ошибка!',
             scope: $scope,
             templateUrl: 'tpl/error.html',
@@ -152,6 +152,9 @@ app.controller('errorController', function (server, $scope, $ionicPopup) {
                 { text: 'ОK' }
             ]
         });
+        $timeout(function() {
+            errPop.close();
+        }, 3000);
     });
 
 });

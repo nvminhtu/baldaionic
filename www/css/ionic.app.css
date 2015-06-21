@@ -7762,7 +7762,17 @@ img.userpic {
   float: left;
   border: 2px solid #4499dd;
   border-radius: 32px;
-  vertical-align: middle; }
+  vertical-align: middle;
+  margin-right: 10px; }
+
+img.userpic-sm {
+  width: 44px;
+  height: 44px;
+  float: left;
+  border: 2px solid #4499dd;
+  border-radius: 22px;
+  vertical-align: middle;
+  margin-right: 10px; }
 
 .profile-header h1 {
   position: relative;
@@ -7776,3 +7786,6 @@ p.user-id {
 
 h1.profileName {
   padding-left: 14px; }
+
+.selected-item {
+  background: #eeeeee !important; }

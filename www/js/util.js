@@ -33,3 +33,28 @@ util.factory('util', function () {
         }
     };
 });
+
+util.directive('userPic', function () {
+    return {
+        restrict: 'EA',
+        template: function(element, attrs) {
+            var cls = attrs.small ? 'userpic-sm' : 'userpic';
+            return '<img class="' + cls + '" src="' + attrs.photoUrl + '" fallback-src="img/blank-avatar.png">';
+        }
+    }
+});
+
+util.directive('number', function () {
+    return {
+        restrict: 'EA',
+        template: function(element, attrs) {
+            var n = parseInt(attrs.n);
+            var fr = n % 10;
+            console.log('fr', fr); // todo
+            var word = attrs.five;
+            if(fr == 1) word = attrs.one;
+            else if(fr < 5 && fr != 0) word = attrs.two;
+            return n + ' ' + word;
+        }
+    }
+});

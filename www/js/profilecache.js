@@ -13,8 +13,11 @@ angular.module('server').service('profileCache', function(server, _, $q) {
             alreadyUser = that.cache[profile.id] = _.extend(alreadyUser, profile);
             that.cacheUid[profile.uid] = alreadyUser;
 
-            if(server.me && server.me.id == profile.id)
+            if(server.me && server.me.id == profile.id) {
                 that.me = alreadyUser;
+                alreadyUser.local = true;
+            } else
+                alreadyUser.local = false;
 
             return alreadyUser;
         }
