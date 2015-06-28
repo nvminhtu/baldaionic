@@ -1,4 +1,4 @@
-angular.module('server').service('profileCache', function(server, _, $q) {
+angular.module('server').service('profileCache', function(util, server, _, $q) {
     var that = this;
 
     that.cache = {};
@@ -6,7 +6,7 @@ angular.module('server').service('profileCache', function(server, _, $q) {
     that.me = {};
 
     that.add = function(profile) {
-        console.log('adding profile', profile);
+        util.log('profile', 'adding profile', profile);
         if(profile && profile.id != 0) {
             var alreadyUser = that.cache[profile.id];
             if(!alreadyUser) alreadyUser = {};

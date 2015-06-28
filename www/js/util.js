@@ -18,6 +18,11 @@ util.factory('$localStorage', ['$window', function($window) {
 }]);
 
 util.factory('util', function () {
+
+    var allowedChannels = [
+        'number'
+    ];
+
     return {
         makeID: function(len) {
             var text = "";
@@ -30,6 +35,12 @@ util.factory('util', function () {
 
         now: function() {
             return Math.floor(Date.now() / 1000);
+        },
+
+        log: function() {
+            var chan = arguments[0];
+            if(allowedChannels.length == 0 || allowedChannels.indexOf(chan) !== -1)
+                console.log.apply(console, arguments);
         }
     };
 });
@@ -44,17 +55,25 @@ util.directive('userPic', function () {
     }
 });
 
-util.directive('number', function () {
+util.directive('number', function (util) {
     return {
-        restrict: 'EA',
-        template: function(element, attrs) {
-            var n = parseInt(attrs.n);
-            var fr = n % 10;
-            console.log('fr', fr); // todo
-            var word = attrs.five;
-            if(fr == 1) word = attrs.one;
-            else if(fr < 5 && fr != 0) word = attrs.two;
-            return n + ' ' + word;
-        }
+        restrict: 'E',
+        scope: {
+            value: '='
+        },
+        link: function ($scope, $element, $attrs) {
+            $scope.$watch('value', function () {
+                var n = parseInt($scope.value);
+                var fr = n % 10;
+                var word = $attrs.five;
+                if(fr == 1) word = $attrs.one;
+                else if(fr < 5 && fr != 0) word = $attrs.two;
+                $scope.result = n + ' ' + word;
+
+                util.log('number', 'N = ', $scope.value); // todo
+            });
+        },
+
+        template: '{{result}}'
     }
 });

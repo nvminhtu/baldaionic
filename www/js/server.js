@@ -76,7 +76,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
 
 
     that.rawRequest = function(data) {
-        console.log('Server Request: ', data);
+        util.log('server', 'Server Request: ', data);
 
         if(!_.contains(that.methodsWithNoSession, data.method))
             data.session = that.sessionKey;
@@ -86,7 +86,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
                 that.onError(r, 'logic');
                 return $q.reject(r);
             } else {
-                console.log('Server Response: ', r.rawData);
+                util.log('server', 'Server Response: ', r.rawData);
                 processAnswers(r);
             }
             return r;
@@ -111,7 +111,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
     that.login = function() {
 
         if(loggingIn) {
-            console.log('login exit; already in progess...');
+            util.log('server', 'login exit; already in progess...');
             return;
         }
 
@@ -119,7 +119,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
         loginData.method = 'login';
 
         loggingIn = true;
-        console.log('logging in...');
+        util.log('server', 'logging in...');
 
         that.eventScope.$broadcast(that.EVENT_LOGGIN_IN_STATUS, that.START);
         that.rawRequest(loginData).then(function(r) {
@@ -139,7 +139,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
             result = r.rawData;
         result.type = type;
 
-        console.log('Server error (' + type + '): ', result);
+        util.log('server', 'Server error (' + type + '): ', result);
 
         that.eventScope.$broadcast(that.EVENT_SERVER_ERROR, result);
     };
@@ -153,7 +153,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
 
     $interval(function() {
         if(hasSession() && that.isSessionExpired()) {
-            console.log('Server: session expired!');
+            util.log('server', 'Server: session expired!');
             that.login();
         }
     }, 5000);
