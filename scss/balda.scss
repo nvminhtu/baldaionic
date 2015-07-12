@@ -141,9 +141,25 @@ h1.profileName {
   background: #eeeeee !important;
 }
 
-.total_players {
+.total-players {
   display: block;
   width: 100%;
   color: #777;
   text-align: center;
+}
+
+.match-separator {
+  width: 32px;
+}
+
+.match-separator-my-turn {
+  color: #2c2;
+}
+
+.match-separator-other-turn {
+  color: #080;
+}
+
+.match-separator-end-game {
+  color: #e11;
 }

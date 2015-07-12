@@ -1,8 +1,17 @@
 <ion-view view-title="Матчи">
     <ion-content class="bg">
-        <div class="padding">
+        <div class="padding card">
             <p>Hello matchlist</p>
             <a class="button button-balanced" ui-sref="tabs.gameplay">Игра</a>
         </div>
+
+        <div class="list">
+            <div ng-repeat="match in model.matches" class="item">
+                <div ng-if="match.type == 'separator'">
+                    <div class="match-separator match-separator-my-turn"></div>
+                </div>
+            </div>
+        </div>
+
     </ion-content>
 </ion-view>
