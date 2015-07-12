@@ -32,12 +32,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         .state('tabs', {
             url: '/tabs',
             abstract: true,
-            templateUrl: 'tpl/tabs.html',
-            controller: function($scope, $ionicHistory) {
-                $scope.onTabSelected = function() {
-                    $ionicHistory.clearHistory();
-                }
-            }
+            templateUrl: 'tpl/tabs.html'
         })
         .state('tabs.matchlist', {
             url: '/matchlist',
@@ -98,9 +93,6 @@ app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 });
 
 
-app.controller('matchlistController', function ($scope, $state) {
-
-});
 
 app.controller('settingsController', function ($scope, prices, $state, server) {
 

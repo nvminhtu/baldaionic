@@ -1,6 +1,7 @@
 <ion-view view-title="Турнир">
     <ion-content class="bg">
         <div class="list">
+            <div class="padding"></div>
             <div ng-class="{'selected-item': player.profile.local, 'item':1}" ng-repeat="player in model.topPlayers" >
                 <user-pic photo-url="{{ player.profile.photoURL }}" small="1"></user-pic>
                 <h2>{{ player.profile.name }}</h2>
@@ -14,6 +15,6 @@
             </div>
         </div>
 
-        <h5>Всего <number one="игрок" two="игрока" five="игроков" value="model.totalPlayers"></number>.</h5>
+        <span class="total_players">Всего <number one="игрок" two="игрока" five="игроков" value="model.totalPlayers"></number>.</span>
     </ion-content>
 </ion-view>

@@ -47,10 +47,8 @@ app.controller('tournamentController', function ($scope, tournament, profileCach
         });
     }
 
-
-    this.onTabSelected = function() {
-        alert(1);
+    $scope.$on('$ionicView.enter', function() {
         loadTournamentInView();
-    };
+    });
 
 });

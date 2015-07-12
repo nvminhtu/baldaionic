@@ -36,6 +36,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             controller: function($scope, $ionicHistory) {
                 $scope.onTabSelected = function() {
                     $ionicHistory.clearHistory();
+                    alert(1);
                 }
             }
         })

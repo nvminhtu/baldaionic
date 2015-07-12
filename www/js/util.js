@@ -20,7 +20,7 @@ util.factory('$localStorage', ['$window', function($window) {
 util.factory('util', function () {
 
     var allowedChannels = [
-        'number'
+
     ];
 
     return {
@@ -39,7 +39,7 @@ util.factory('util', function () {
 
         log: function() {
             var chan = arguments[0];
-            if(allowedChannels.length == 0 || allowedChannels.indexOf(chan) !== -1)
+            if(chan == '!' || allowedChannels.length == 0 || allowedChannels.indexOf(chan) !== -1)
                 console.log.apply(console, arguments);
         }
     };
