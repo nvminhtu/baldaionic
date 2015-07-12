@@ -25,17 +25,18 @@ app.controller('tournamentController', function ($scope, tournament, profileCach
         me: {}
     };
 
-    $scope.$on( "$ionicView.enter", function () {
+    function loadTournamentInView()
+    {
         tournament.load().then(function() {
             m.topPlayers = tournament.topPlayers;
             m.totalPlayers = tournament.totalPlayers;
             m.meOutsider = true;
             _.each(m.topPlayers, function (player) {
-                 profileCache.loadById(player.profileID).then(function (profile) {
-                     player.profile = profile;
-                     if(profile.local)
-                         m.meOutsider = false;
-                 });
+                profileCache.loadById(player.profileID).then(function (profile) {
+                    player.profile = profile;
+                    if(profile.local)
+                        m.meOutsider = false;
+                });
             });
             if(m.meOutsider)
                 m.me = {
@@ -44,6 +45,12 @@ app.controller('tournamentController', function ($scope, tournament, profileCach
                     rank: profileCache.me.lb_rank
                 };
         });
-    });
+    }
+
+
+    this.onTabSelected = function() {
+        alert(1);
+        loadTournamentInView();
+    };
 
 });
