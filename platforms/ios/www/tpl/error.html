@@ -1,6 +1,6 @@
-<span ng-if="data.type == 'inet'">Проверьте интернет подключение!</span>
+<span ng-if="data.type == 'inet'">Сервер недоступен.<br>Проверьте интернет подключение!</span>
 <span ng-if="data.type == 'logic'">
     Произошла ошибка на сервере:
-    <b>{{ data.message }}</b>
-    <span ng-if="data.code">(Код: {{ data.code }})</span>
+    "<b>{{ data.message }}</b>"<br>
+    <span ng-if="data.code">Код ошибки: {{ data.code }}</span><br>
 </span>

@@ -1,6 +1,6 @@
 {
-  "name": "baldaionic",
-  "app_id": "61fa1bda",
+  "name": "balda",
+  "app_id": "",
   "gulpStartupTasks": [
     "sass",
     "watch"

@@ -17,7 +17,7 @@
  under the License.
  */
 //
-// Prefix header for all source files of the 'baldaionic' target in the 'baldaionic' project
+// Prefix header for all source files of the 'HelloCordova' target in the 'HelloCordova' project
 //
 
 #ifdef __OBJC__

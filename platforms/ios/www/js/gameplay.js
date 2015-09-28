@@ -94,7 +94,7 @@ function SelectionPath() {
 
 }
 
-gp.controller('gameplayController', function ($scope, fieldConst) {
+gp.controller('gameplayController', function ($scope, fieldConst, util) {
 
     var fieldMax = fieldConst.max;
     var fieldTotal = fieldMax * fieldMax;
@@ -214,7 +214,7 @@ gp.controller('gameplayController', function ($scope, fieldConst) {
             if(newCell)
             {
                 newCell.val = letter;
-                console.log('word = ', m.selectedPath.getWord());
+                util.log('game', 'word = ', m.selectedPath.getWord());
             }
         }
         syncField();

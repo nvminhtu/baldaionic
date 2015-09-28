@@ -49,7 +49,7 @@
       </dict>
     </dict>
     <key>CFBundleIdentifier</key>
-    <string>ru.tirinox.balda</string>
+    <string>com.ionicframework.balda633787</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -68,13 +68,6 @@
     <string></string>
     <key>NSMainNibFile~ipad</key>
     <string></string>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationPortraitUpsideDown</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
     <key>UILaunchImages</key>
     <array>
       <dict>

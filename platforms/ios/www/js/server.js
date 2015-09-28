@@ -1,52 +1,10 @@
-var sv = angular.module('server', ['ionic', 'config', 'util', 'social']);
+var sv = angular.module('server', ['ionic', 'config', 'util', 'social', 'underscore']);
 
-sv.service('server', function($http, config, $rootScope, socialProvider) {
-
-    var that = this;
-    that.sessionKey = '';
-    that.sessionAcquireTS = 0;
-    that.prices = {};
-
-    var sessionExpiration = 60 * 59; // 59 min
-
-    function rawPromise(data) {
-        return $http.post(config.server, data);
-    }
-
-    function isGood(r) {
-        return r && r.result && r.result == 'good';
-    }
-
-    function rawRequest(data) {
-        return rawPromise(data).success(function (r) {
-            if(!isGood(r)) {
-                r.type = 'logic';
-                that.onError(r);
-            }
-        }).error( function () {
-            that.onError({type: 'inet'});
-        });
-    }
-
-    that.login = function() {
-        var loginData = socialProvider.getLoginData();
-        loginData.method = 'login';
-
-        $rootScope.$broadcast('loggingIn', 'start');
-        rawRequest(loginData).success(function(r) {
-            console.log('login', r);
-        }).finally(function() {
-            $rootScope.$broadcast('loggingIn', 'end');
-        });
-    };
-
-    that.onError = function(r) {
-        $rootScope.$broadcast('serverError', r);
-    };
-
-
-    that.getAnswer = function(r, name) {
-        var a = r['answers'];
+function Answer(rawData)
+{
+    this.rawData = rawData.data;
+    this.getAnswer = function(name) {
+        var a = this.rawData['answers'];
         if(a)
             for(var i = 0; i < a.length; ++i)
                 if(a[i][name])
@@ -54,8 +12,8 @@ sv.service('server', function($http, config, $rootScope, socialProvider) {
         return null;
     };
 
-    that.getAllAnswers = function(r, name) {
-        var a = r['answers'];
+    this.getAllAnswers = function(name) {
+        var a = this.rawData['answers'];
         var res = [];
         if(a)
             for(var i = 0; i < a.length; ++i)
@@ -64,45 +22,157 @@ sv.service('server', function($http, config, $rootScope, socialProvider) {
         return res;
     };
 
-    that.getPrices = function() {
-        return rawRequest({
+    this.isGood = function() {
+        var r = this.rawData;
+        return r && r.result && r.result == 'good';
+    };
+}
+
+sv.service('server', function($http, config, $rootScope, socialProvider, util, $interval, _, $q) {
+
+    var that = this;
+
+    that.methodsWithNoSession = [
+        'prices',
+        'login'
+    ];
+    that.sessionKey = '';
+    that.sessionAcquireTS = 0;
+    that.eventScope = $rootScope.$new();
+
+    var ERROR_BAD_SESSION = -1013;
+    var SESSION_EXPIRATION = 60 * 59; // 59 min
+
+    that.EVENT_LOGGIN_IN_STATUS = 'serverLoggingIn';
+    that.EVENT_ANSWER = 'serverAnswer:';
+    that.EVENT_SERVER_ERROR = 'serverError';
+    that.START = 'start';
+    that.END = 'end';
+
+    function rawPromise(data) {
+        return $http.post(config.server, data).then(function (data) {
+            return new Answer(data);
+        });
+    }
+
+    that.isSessionExpired = function() {
+        return (util.now() - that.sessionAcquireTS) > SESSION_EXPIRATION;
+    };
+
+    function publishAnswerEvent(name, data) {
+        that.eventScope.$broadcast(that.EVENT_ANSWER + name, data);
+    }
+
+    function processAnswers(r) {
+        var answers = r.rawData['answers'];
+        for(var i = 0; i < answers.length; ++i) {
+            var a = answers[i];
+            var keys = _.keys(a);
+            if(keys.length > 0)
+                publishAnswerEvent(keys[0], a[keys[0]]);
+        }
+    }
+
+
+
+    that.rawRequest = function(data) {
+        util.log('server', 'Server Request: ', data);
+
+        if(!_.contains(that.methodsWithNoSession, data.method))
+            data.session = that.sessionKey;
+
+        return rawPromise(data).then(function (r) {
+            if(!r.isGood()) {
+                that.onError(r, 'logic');
+                return $q.reject(r);
+            } else {
+                util.log('server', 'Server Response: ', r.rawData);
+                processAnswers(r);
+            }
+            return r;
+        }, function (r) {
+            that.onError({}, 'inet');
+            return r;
+        });
+    };
+
+    that.request = that.rawRequest;
+
+    function hasSession() {
+        return that.sessionKey != '';
+    }
+
+    that.isLoggedIn = function() {
+        return hasSession() && !that.isSessionExpired();
+    };
+
+    var loggingIn = false;
+
+    that.login = function() {
+
+        if(loggingIn) {
+            util.log('server', 'login exit; already in progess...');
+            return;
+        }
+
+        var loginData = socialProvider.getLoginData();
+        loginData.method = 'login';
+
+        loggingIn = true;
+        util.log('server', 'logging in...');
+
+        that.eventScope.$broadcast(that.EVENT_LOGGIN_IN_STATUS, that.START);
+        that.rawRequest(loginData).then(function(r) {
+            that.me = r.getAnswer('user');
+            that.sessionKey = r.getAnswer('login').sid;
+            that.sessionAcquireTS = util.now();
+            publishAnswerEvent('user', that.me);
+        }).finally(function() {
+            loggingIn = false;
+            that.eventScope.$broadcast(that.EVENT_LOGGIN_IN_STATUS, that.END);
+        });
+    };
+
+    that.onError = function(r, type) {
+        var result = r;
+        if(r instanceof Answer)
+            result = r.rawData;
+        result.type = type;
+
+        util.log('server', 'Server error (' + type + '): ', result);
+
+        that.eventScope.$broadcast(that.EVENT_SERVER_ERROR, result);
+    };
+
+    that.logout = function() {
+        that.sessionKey = '';
+        that.sessionAcquireTS = 0;
+    };
+
+    that.logout();
+
+    $interval(function() {
+        if(hasSession() && that.isSessionExpired()) {
+            util.log('server', 'Server: session expired!');
+            that.login();
+        }
+    }, 5000);
+});
+
+sv.service('prices', function(server) {
+    var that = this;
+
+    that.prices = {};
+
+    that.load = function() {
+        return server.request({
             method: 'prices'
-        }).success(function (r) {
-            var prices = that.getAnswer(r, 'prices');
+        }).then(function (r) {
+            var prices = r.getAnswer('prices');
             angular.forEach(prices, function (v, k) {
                 v.name = k;
             });
             that.prices = prices;
         });
     };
-
-});
-
-
-app.controller('errorController', function ($rootScope, $scope, $ionicPopup, $ionicLoading) {
-
-    $rootScope.$on('serverError', function (event, data) {
-        $scope.data = data;
-
-        $ionicPopup.show({
-            title: 'Ошибка!',
-            scope: $scope,
-            templateUrl: 'tpl/error.html',
-            buttons: [
-                { text: 'ОK' }
-            ]
-        });
-    });
-
-    $rootScope.$on('loggingIn', function (event, state) {
-
-        $scope.loadingType = 'auth';
-        if(state == 'start')
-            $ionicLoading.show({
-                scope: $scope,
-                templateUrl: 'tpl/loading.html'
-            });
-        else
-            $ionicLoading.hide();
-    });
 });
