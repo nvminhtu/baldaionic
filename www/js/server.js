@@ -40,6 +40,21 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
     that.sessionAcquireTS = 0;
     that.eventScope = $rootScope.$new();
 
+    that.pushStream = new PushStream({
+        host: config.host + '/push',
+        timeout: 25000,
+        modes: 'websocket|longpolling'
+    });
+    that.pushStream.onmessage = function(data) {
+        util.log('server', 'PushStream data: ' + data);
+    };
+    that.pushStream.onerror = function(err) {
+        util.log('server', 'PushStream error: ' + err);
+    };
+    that.pushStream.onstatuschange = function(status) {
+        util.log('server', 'PushStream status: ' + status);
+    };
+
     var ERROR_BAD_SESSION = -1013;
     var SESSION_EXPIRATION = 60 * 59; // 59 min
 
@@ -72,8 +87,6 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
                 publishAnswerEvent(keys[0], a[keys[0]]);
         }
     }
-
-
 
     that.rawRequest = function(data) {
         util.log('server', 'Server Request: ', data);
@@ -126,6 +139,12 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
             that.me = r.getAnswer('user');
             that.sessionKey = r.getAnswer('login').sid;
             that.sessionAcquireTS = util.now();
+
+            that.pushStream.disconnect();
+            that.pushStream.removeAllChannels();
+            that.pushStream.addChannel('balda_' + that.me.id);
+            that.pushStream.connect();
+
             publishAnswerEvent('user', that.me);
         }).finally(function() {
             loggingIn = false;

@@ -1,34 +1,27 @@
 /*global PushStream WebSocketWrapper EventSourceWrapper EventSource*/
 /*jshint evil: true, plusplus: false, regexp: false */
 /**
-The MIT License (MIT)
-
-Copyright (c) 2010-2014 Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider <stockrt@gmail.com>
-
-This file is part of Nginx Push Stream Module.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-pushstream.js
-
-Created: Nov 01, 2011
-Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider <stockrt@gmail.com>
+ The MIT License (MIT)
+ Copyright (c) 2010-2014 Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider <stockrt@gmail.com>
+ This file is part of Nginx Push Stream Module.
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ pushstream.js
+ Created: Nov 01, 2011
+ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider <stockrt@gmail.com>
  */
 (function (window, document, undefined) {
   "use strict";
@@ -142,8 +135,8 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
   };
 
   var isArray = Array.isArray || function(obj) {
-    return Object.prototype.toString.call(obj) === '[object Array]';
-  };
+        return Object.prototype.toString.call(obj) === '[object Array]';
+      };
 
   var isString = function(obj) {
     return Object.prototype.toString.call(obj) === '[object String]';
@@ -406,12 +399,12 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
     }
 
     var message = {
-        id     : msg[keys.jsonIdKey],
-        channel: msg[keys.jsonChannelKey],
-        text   : isString(msg[keys.jsonTextKey]) ? unescapeText(msg[keys.jsonTextKey]) : msg[keys.jsonTextKey],
-        tag    : msg[keys.jsonTagKey],
-        time   : msg[keys.jsonTimeKey],
-        eventid: msg[keys.jsonEventIdKey] || ""
+      id     : msg[keys.jsonIdKey],
+      channel: msg[keys.jsonChannelKey],
+      text   : isString(msg[keys.jsonTextKey]) ? unescapeText(msg[keys.jsonTextKey]) : msg[keys.jsonTextKey],
+      tag    : msg[keys.jsonTagKey],
+      time   : msg[keys.jsonTimeKey],
+      eventid: msg[keys.jsonEventIdKey] || ""
     };
 
     return message;
@@ -493,8 +486,8 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
     var dstPort = normalizePort(parser.protocol === "https:", parser.port);
 
     return (window.location.protocol !== parser.protocol) ||
-           (window.location.hostname !== parser.hostname) ||
-           (srcPort !== dstPort);
+        (window.location.hostname !== parser.hostname) ||
+        (srcPort !== dstPort);
   };
 
   var linker = function(method, instance) {
@@ -517,7 +510,7 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
     if (message.tag) { this.pushstream._etag = message.tag; }
     if (message.time) { this.pushstream._lastModified = message.time; }
     if (message.eventid) { this.pushstream._lastEventId = message.eventid; }
-    this.pushstream._onmessage(message.text, message.id, message.channel, message.eventid, true);
+    this.pushstream._onmessage(message.text, message.id, message.channel, message.eventid, true, message.time);
   };
 
   var onopenCallback = function() {
@@ -683,7 +676,8 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
       if ("ActiveXObject" in window) {
         var transferDoc = new window.ActiveXObject("htmlfile");
         transferDoc.open();
-        transferDoc.write("<html><script>document.domain='" + document.domain + "';</script><body><iframe id='" + this.iframeId + "' src='" + url + "'></iframe></body></html>");
+        transferDoc.write("\x3C" + "html" + "\x3E\x3C" + "script" + "\x3E" + "document.domain='" + document.domain + "';\x3C" + "/script" + "\x3E");
+        transferDoc.write("\x3C" + "body" + "\x3E\x3C" + "iframe id='" + this.iframeId + "' src='" + url + "'\x3E\x3C" + "/iframe" + "\x3E\x3C" + "/body" + "\x3E\x3C" + "/html" + "\x3E");
         transferDoc.parentWindow.PushStream = PushStream;
         transferDoc.close();
         ifr = transferDoc.getElementById(this.iframeId);
@@ -725,7 +719,7 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
         if (time) { this.pushstream._lastModified = time; }
         if (eventid) { this.pushstream._lastEventId = eventid; }
       }
-      this.pushstream._onmessage(unescapeText(text), id, channel, eventid || "", true);
+      this.pushstream._onmessage(unescapeText(text), id, channel, eventid || "", true, time);
       this.setPingTimer();
     },
 
@@ -749,14 +743,14 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
     this.messagesQueue = [];
     this._linkedInternalListen = linker(this._internalListen, this);
     this.xhrSettings = {
-        timeout: this.pushstream.timeout,
-        data: {},
-        url: null,
-        success: linker(this.onmessage, this),
-        error: linker(this.onerror, this),
-        load: linker(this.onload, this),
-        beforeSend: linker(this.beforeSend, this),
-        afterReceive: linker(this.afterReceive, this)
+      timeout: this.pushstream.timeout,
+      data: {},
+      url: null,
+      success: linker(this.onmessage, this),
+      error: linker(this.onerror, this),
+      load: linker(this.onload, this),
+      beforeSend: linker(this.beforeSend, this),
+      afterReceive: linker(this.afterReceive, this)
     };
   };
 
@@ -866,7 +860,7 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
 
       while (this.messagesQueue.length > 0) {
         var message = this.messagesQueue.shift();
-        this.pushstream._onmessage(message.text, message.id, message.channel, message.eventid, (this.messagesQueue.length === 0));
+        this.pushstream._onmessage(message.text, message.id, message.channel, message.eventid, (this.messagesQueue.length === 0), message.time);
       }
     }
   };
@@ -936,10 +930,10 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
       try {
         var wrapper = null;
         switch (this.modes[i]) {
-        case "websocket"  : wrapper = new WebSocketWrapper(this);   break;
-        case "eventsource": wrapper = new EventSourceWrapper(this); break;
-        case "longpolling": wrapper = new LongPollingWrapper(this); break;
-        case "stream"     : wrapper = new StreamWrapper(this);      break;
+          case "websocket"  : wrapper = new WebSocketWrapper(this);   break;
+          case "eventsource": wrapper = new EventSourceWrapper(this); break;
+          case "longpolling": wrapper = new LongPollingWrapper(this); break;
+          case "stream"     : wrapper = new StreamWrapper(this);      break;
         }
         this.wrappers[this.wrappers.length] = wrapper;
       } catch(e) { Log4js.info(e); }
@@ -1080,12 +1074,12 @@ Authors: Wandenberg Peixoto <wandenberg@gmail.com>, Rogério Carvalho Schneider 
       this._reconnect(this.reconnectOnTimeoutInterval);
     },
 
-    _onmessage: function(text, id, channel, eventid, isLastMessageFromBatch) {
-      Log4js.debug("message", text, id, channel, eventid, isLastMessageFromBatch);
+    _onmessage: function(text, id, channel, eventid, isLastMessageFromBatch, time) {
+      Log4js.debug("message", text, id, channel, eventid, isLastMessageFromBatch, time);
       if (id === -2) {
         if (this.onchanneldeleted) { this.onchanneldeleted(channel); }
       } else if (id > 0) {
-        if (this.onmessage) { this.onmessage(text, id, channel, eventid, isLastMessageFromBatch); }
+        if (this.onmessage) { this.onmessage(text, id, channel, eventid, isLastMessageFromBatch, time); }
       }
     },
 
