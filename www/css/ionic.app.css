@@ -7769,10 +7769,6 @@ a.button {
   background-color: rgba(200, 200, 200, 0.5); }
 
 /*Фон*/
-.bg {
-  background-image: url(../img/bg.jpg);
-  background-repeat: repeat; }
-
 /*Error*/
 .error {
   color: red; }
@@ -7786,7 +7782,7 @@ img.userpic {
   height: 64px;
   float: left;
   border: 2px solid #4499dd;
-  border-radius: 32px;
+  border-radius: 10px;
   vertical-align: middle;
   margin-right: 10px; }
 
@@ -7795,7 +7791,7 @@ img.userpic-sm {
   height: 44px;
   float: left;
   border: 2px solid #4499dd;
-  border-radius: 22px;
+  border-radius: 8px;
   vertical-align: middle;
   margin-right: 10px; }
 
@@ -7832,3 +7828,15 @@ h1.profileName {
 
 .match-separator-end-game {
   color: #e11; }
+
+.toppanel {
+  display: block;
+  width: 100%;
+  height: 100px;
+  background: #85ff9a;
+  border-bottom: 1px solid #3cd45f; }
+
+.bigname {
+  font-family: 'Roboto', 'Helvetica Neue', serif;
+  font-size: 46px;
+  color: #101010; }

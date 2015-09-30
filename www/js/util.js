@@ -41,6 +41,10 @@ util.factory('util', function () {
             var chan = arguments[0];
             if(chan == '!' || allowedChannels.length == 0 || allowedChannels.indexOf(chan) !== -1)
                 console.log.apply(console, arguments);
+        },
+
+        thisis: function (x, defaultValue) {
+            return (typeof x === 'undefined') ? defaultValue : x;
         }
     };
 });

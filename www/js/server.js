@@ -40,18 +40,32 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
     that.sessionAcquireTS = 0;
     that.eventScope = $rootScope.$new();
 
-    that.pushStream = new PushStream({
+    var pushStream = new PushStream({
         host: config.host + '/push',
         timeout: 25000,
         modes: 'websocket|longpolling'
     });
-    that.pushStream.onmessage = function(data) {
+
+    function reconnectSocket()
+    {
+        pushStream.disconnect();
+        pushStream.removeAllChannels();
+        pushStream.addChannel('balda_' + that.me.id);
+        pushStream.connect();
+    }
+
+    pushStream.onmessage = function(data) {
         util.log('server', 'PushStream data: ' + data);
     };
-    that.pushStream.onerror = function(err) {
+    pushStream.onerror = function(err) {
         util.log('server', 'PushStream error: ' + err);
+        $interval(function () {
+            if(that.isLoggedIn()) {
+                reconnectSocket();
+            }
+        }, 5000, 1);
     };
-    that.pushStream.onstatuschange = function(status) {
+    pushStream.onstatuschange = function(status) {
         util.log('server', 'PushStream status: ' + status);
     };
 
@@ -139,12 +153,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
             that.me = r.getAnswer('user');
             that.sessionKey = r.getAnswer('login').sid;
             that.sessionAcquireTS = util.now();
-
-            that.pushStream.disconnect();
-            that.pushStream.removeAllChannels();
-            that.pushStream.addChannel('balda_' + that.me.id);
-            that.pushStream.connect();
-
+            reconnectSocket();
             publishAnswerEvent('user', that.me);
         }).finally(function() {
             loggingIn = false;
@@ -166,6 +175,9 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
     that.logout = function() {
         that.sessionKey = '';
         that.sessionAcquireTS = 0;
+
+        pushStream.disconnect();
+        pushStream.removeAllChannels();
     };
 
     that.logout();
@@ -178,10 +190,24 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
     }, 5000);
 });
 
-sv.service('prices', function(server) {
+sv.service('prices', function(server, _, util) {
     var that = this;
 
-    that.prices = {};
+    var _prices = {};
+
+    that.getAll = function() {
+        return _(_prices).clone();
+    };
+
+    that.getNumber = function(key, defaultValue) {
+        defaultValue = { value: util.thisis(defaultValue, 0) };
+        return util.thisis(_prices[key], defaultValue).value;
+    };
+
+    that.getString = function(key, defaultValue) {
+        defaultValue = { stringValue: util.thisis(defaultValue, '') };
+        return util.thisis(_prices[key], defaultValue).stringValue;
+    };
 
     that.load = function() {
         return server.request({
@@ -191,7 +217,7 @@ sv.service('prices', function(server) {
             angular.forEach(prices, function (v, k) {
                 v.name = k;
             });
-            that.prices = prices;
+            _prices = prices;
         });
     };
 });
