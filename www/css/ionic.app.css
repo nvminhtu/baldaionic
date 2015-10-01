@@ -7704,9 +7704,7 @@ a.button {
 .field {
   width: 320px;
   height: 320px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 110px; }
+  margin: auto; }
 
 .fieldcell {
   width: 60px;
@@ -7800,8 +7798,8 @@ img.userpic-sm {
   left: 18px;
   top: 10px; }
 
-p.user-id {
-  left: 18px;
+div.user-id {
+  padding: 4px;
   font-size: 12px;
   position: relative; }
 
@@ -7838,5 +7836,10 @@ h1.profileName {
 
 .bigname {
   font-family: 'Roboto', 'Helvetica Neue', serif;
-  font-size: 46px;
-  color: #101010; }
+  font-size: 32px;
+  color: #101010;
+  padding: 4px; }
+
+.tournament-place {
+  display: inline-block;
+  font-size: 18px; }

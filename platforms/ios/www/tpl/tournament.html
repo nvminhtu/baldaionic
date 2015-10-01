@@ -2,11 +2,16 @@
     <ion-content class="bg">
         <div class="list">
             <div class="padding"></div>
-            <div ng-class="{'selected-item': player.profile.local, 'item':1}" ng-repeat="player in model.topPlayers" >
-                <user-pic photo-url="{{ player.profile.photoURL }}" small="1"></user-pic>
-                <h2>{{ player.profile.name }}</h2>
-                <p>{{ player.score }}</p>
+
+            <div ng-class="{'selected-item': player.profile.local, 'item':1}" ng-repeat="player in model.topPlayers">
+
+
+                        <user-pic photo-url="{{ player.profile.photoURL }}" small="1"></user-pic>
+                        <h2>{{ player.place }}. {{ player.profile.name }}</h2>
+                        <p>{{ player.score }}</p>
+
             </div>
+
             <div class="padding" ng-if="model.meOutsider"></div>
             <div class="item selected-item" ng-if="model.meOutsider">
                 <user-pic photo-url="{{ model.me.profile.photoURL }}" small="1"></user-pic>

@@ -16,6 +16,10 @@ app.run(function($ionicPlatform, profileCache) {
         if(window.StatusBar) {
             StatusBar.styleDefault();
         }
+
+        document.addEventListener("resume", function() {
+            alert("The application is resuming from the background");
+        }, false);
     });
 });
 
@@ -96,18 +100,11 @@ app.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
 app.controller('settingsController', function ($scope, prices, $state, server) {
 
-    var m = $scope.model = {
-        prices: {}
-    };
-
     $scope.logout = function() {
         $state.go('auth');
         server.logout();
     };
 
-    prices.load().then(function() {
-        m.prices = prices.prices;
-    });
 });
 
 app.controller('appController', function ($scope, $ionicPopup, $ionicLoading, server, $state) {

@@ -31,12 +31,14 @@ app.controller('tournamentController', function ($scope, tournament, profileCach
             m.topPlayers = tournament.topPlayers;
             m.totalPlayers = tournament.totalPlayers;
             m.meOutsider = true;
+            var place = 1;
             _.each(m.topPlayers, function (player) {
                 profileCache.loadById(player.profileID).then(function (profile) {
                     player.profile = profile;
                     if(profile.local)
                         m.meOutsider = false;
                 });
+                player.place = place++;
             });
             if(m.meOutsider)
                 m.me = {

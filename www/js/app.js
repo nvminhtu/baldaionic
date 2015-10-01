@@ -16,6 +16,10 @@ app.run(function($ionicPlatform, profileCache) {
         if(window.StatusBar) {
             StatusBar.styleDefault();
         }
+
+        document.addEventListener("resume", function() {
+            alert("The application is resuming from the background");
+        }, false);
     });
 });
 

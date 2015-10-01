@@ -27,9 +27,9 @@ soc.service('socialProvider', function($localStorage, util) {
         $localStorage.setObject(LOGIN_DATA_KEY, data);
     }
 
-    that.regenerate = function() {
+    function regenerate() {
         saveLoginData(generatePair());
-    };
+    }
 
     that.hasLoginData = function() {
         var data = getLoginDataFromStorage();
@@ -40,8 +40,7 @@ soc.service('socialProvider', function($localStorage, util) {
         var data = getLoginDataFromStorage();
         if(!data.uid || !data.token)
         {
-            data = generatePair();
-            saveLoginData(data);
+            regenerate();
         }
         return data;
     };

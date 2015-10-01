@@ -118,7 +118,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
             }
             return r;
         }, function (r) {
-            that.onError({}, 'inet');
+            that.onError(r, 'inet');
             return r;
         });
     };
@@ -167,7 +167,7 @@ sv.service('server', function($http, config, $rootScope, socialProvider, util, $
             result = r.rawData;
         result.type = type;
 
-        util.log('server', 'Server error (' + type + '): ', result);
+        util.log('server', 'Server error (' + type + '): ', JSON.stringify (result) );
 
         that.eventScope.$broadcast(that.EVENT_SERVER_ERROR, result);
     };

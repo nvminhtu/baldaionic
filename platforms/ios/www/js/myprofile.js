@@ -15,4 +15,8 @@ app.controller('myProfileController', function ($scope, profileCache) {
     var m = $scope.model = {
         me: profileCache.me
     };
+
+    $scope.$on('$ionicView.enter', function() {
+        $scope.$digest();
+    });
 });
