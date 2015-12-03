@@ -1,10 +1,7 @@
 <ion-view view-title="Матчи">
     <ion-content class="bg">
-        <div class="padding card">
-            <p>Hello matchlist</p>
-            <a class="button button-balanced" ui-sref="tabs.gameplay">Игра</a>
-        </div>
 
+        <ion-refresher pulling-text="Потяните, чтобы обновить..." on-refresh="doReload()"></ion-refresher>
         <div class="list">
             <div ng-repeat="match in model.matches" class="item">
                 <div ng-if="match.type == 'separator'">

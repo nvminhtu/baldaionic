@@ -7,7 +7,7 @@ mm.service('mm', function() {
     };
 });
 
-mm.controller('matchlistController', function ($scope, $ionicHistory) {
+mm.controller('matchlistController', function ($scope, $ionicHistory, $timeout) {
 
     var m = $scope.model = {};
 
@@ -29,5 +29,15 @@ mm.controller('matchlistController', function ($scope, $ionicHistory) {
         $ionicHistory.clearHistory();
     });
 
+    function hideRefresher()
+    {
+        $scope.$broadcast('scroll.refreshComplete');
+    }
+
+    $scope.doReload = function() {
+        $timeout(function() {
+            hideRefresher();
+        }, 2000);
+    };
 
 });
