@@ -1,0 +1,23 @@
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes.dex : \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\com\ionic\keyboard\IonicKeyboard$1.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\com\ionic\keyboard\IonicKeyboard$2.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\com\ionic\keyboard\IonicKeyboard$3.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\com\ionic\keyboard\IonicKeyboard.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\com\plugin\gcm\CordovaGCMBroadcastReceiver.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\com\plugin\gcm\GCMIntentService.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\com\plugin\gcm\PushHandlerActivity.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\com\plugin\gcm\PushPlugin.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\org\apache\cordova\device\Device.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\BaldaApp.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\BuildConfig.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\MainActivity.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\Manifest$permission.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\Manifest.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\R$attr.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\R$drawable.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\R$string.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\R$xml.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\classes\ru\tirinox\balda\R.class \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\dexedLibs\classes-8861d6419306d4002c08ad39fa4e9cb6.jar \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\dexedLibs\gcm-92ed6eddf466f8bce1b7ab4dca5f3c34.jar \
+C:\cygwin64\home\Tirinox\projects\baldaionic\platforms\android\ant-build\dexedLibs\android-support-v13-8006943f744a804aa78feb1027810b05.jar \
