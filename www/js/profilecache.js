@@ -44,7 +44,6 @@ angular.module('server').service('profileCache', function(util, server, _, $q) {
                 by: 'id',
                 uid: id
             }).then(function () {
-                //console.log('ready to return user ' + id, that.getById(id));
                 return that.getById(id);
             });
         }
